@@ -1,4 +1,0 @@
-# Slides
-
-Templates for slides
-

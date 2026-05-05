@@ -1,0 +1,9 @@
+[package]
+name = "tarel-rs"
+version = "0.0.10"
+edition = "2024"
+
+[dependencies]
+tch = { version = "0.22" }
+anyhow = { version = "1" }
+clap = { version = "4", features = ["derive"] }
