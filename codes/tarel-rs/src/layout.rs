@@ -83,6 +83,41 @@ impl RunLayout {
         self.stage_one_dir().join("stationarity_scores.json")
     }
 
+    /// Per-(cell, clock) directory for Stage-3 statistical artifacts.
+    pub fn stage_three_dir(&self, cell: &CellId, clock: &str) -> PathBuf {
+        self.stage_one_dir()
+            .join("recurrence")
+            .join(cell.as_str().replace(':', "_"))
+            .join(clock)
+    }
+
+    /// Per-(cell, clock) per-bucket RQA scalars JSONL.
+    pub fn rqa_scalars_path(&self, cell: &CellId, clock: &str) -> PathBuf {
+        self.stage_three_dir(cell, clock).join("rqa_scalars.jsonl")
+    }
+
+    /// Per-(cell, clock) KS-distance session-pair time series.
+    pub fn ks_series_path(&self, cell: &CellId, clock: &str) -> PathBuf {
+        self.stage_three_dir(cell, clock).join("ks_series.json")
+    }
+
+    /// Per-(cell, clock) Hill estimates.
+    pub fn hill_path(&self, cell: &CellId, clock: &str) -> PathBuf {
+        self.stage_three_dir(cell, clock).join("hill.json")
+    }
+
+    /// Per-(cell, clock) hierarchical variance ratios.
+    pub fn hierarchical_path(&self, cell: &CellId, clock: &str) -> PathBuf {
+        self.stage_three_dir(cell, clock).join("hierarchical.json")
+    }
+
+    /// On-disk path of the pre-registered Stationarity score spec
+    /// (resolved at run time so the manifest can record the version
+    /// actually in effect).
+    pub fn stationarity_spec_path(&self) -> PathBuf {
+        self.stage_one_dir().join("StationarityScoreSpec.json")
+    }
+
     pub fn stage_two_dir(&self, cell: &CellId, seed: u64) -> PathBuf {
         self.run_dir
             .join("stage_two")
