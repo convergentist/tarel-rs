@@ -1,3 +1,8 @@
+
+codes/tarel-rs/runs_*
+codes/tarel-rs/runs/*
+tarel-neurips/stage*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
