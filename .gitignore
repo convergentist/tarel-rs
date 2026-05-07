@@ -3,6 +3,9 @@ codes/tarel-rs/runs_*
 codes/tarel-rs/runs/*
 tarel-neurips/stage*
 
+.python-version
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
