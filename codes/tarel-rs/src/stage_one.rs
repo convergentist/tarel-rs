@@ -22,13 +22,13 @@ use std::path::{Path, PathBuf};
 use std::time::Instant;
 
 use anyhow::{Context, Result};
-use sha2::{Digest, Sha256};
 
 use takens_rp::book::reconstruct;
 use takens_rp::bucketer::{
     Bucket, EventBucketer, InfoTimeBucketer, PhysicalBucketer, calibrate_info_time_threshold,
     run_bucketer,
 };
+use takens_rp::distance::DistanceMetric;
 use takens_rp::ingest::read_deltas;
 use takens_rp::represent::K_BINS_PER_SIDE;
 use takens_rp::types::LobSnapshot;
@@ -36,6 +36,12 @@ use takens_rp::types::LobSnapshot;
 use crate::cell::{Cell, CellId, CellMetadata};
 use crate::layout::RunLayout;
 use crate::manifest::{CellRunRecord, CellRunStatus, Manifest};
+use crate::recurrence::{produce_recurrence_artifacts, RecurrenceOutcome};
+use crate::stage_three::{
+    compute_and_write_rqa_scalars, run_stage_three_for_clock,
+    write_and_verify_stationarity_spec, write_stationarity_scores,
+};
+use crate::util::sha256_path;
 
 // Locked Stage-1 calibration band per engineering_proposal.md Part I.
 pub const INFO_TIME_TARGET_LO_NS: u64 = 30 * 1_000_000_000;
@@ -56,19 +62,70 @@ pub struct StageOneOutcome {
     pub info_time_threshold: Option<f64>,
     pub wallclock_ms: u64,
     pub written_paths: Vec<PathBuf>,
+    /// Per-clock recurrence-layer outcomes when `produce_dp_rp == true`.
+    /// `None` when Stage 2 outputs were not requested.
+    pub recurrence: Option<Vec<RecurrenceOutcome>>,
+    /// Stationarity-score artifact path when `full == true`.
+    pub stationarity_scores_path: Option<PathBuf>,
+    /// Spec version used when `full == true`. Recorded so Stage-5 can
+    /// validate it across runs.
+    pub stationarity_spec_version: Option<String>,
 }
 
-/// Run Stage 1 against a single parquet file for one cell.
-///
-/// The parquet file is read once and the resulting snapshot stream is
-/// shared across all three bucketers (cheap clones — only the
-/// per-bucket snapshot vectors are duplicated).
+/// Extra flags controlling how `run_stage_one` behaves.
+#[derive(Debug, Clone, Copy)]
+pub struct StageOneOptions {
+    /// Produce Stage-2 recurrence-layer artifacts (DPs + RPs + 64×64
+    /// normalized tensors + PNG sanity grids) for every (clock, bucket).
+    pub produce_dp_rp: bool,
+    /// Run the full Stage-3 statistical pass: per-bucket RQA scalars,
+    /// KS over 8h sessions, hierarchical variance ratio, Hill estimator,
+    /// per-cell Stationarity Score. Implies `produce_dp_rp = false`
+    /// for the Stage-3 work (Stage-3 reuses the bucket-level pipeline
+    /// internally). When both are true, Stage 2 artifacts are also
+    /// emitted alongside the Stage-3 outputs.
+    pub full: bool,
+    /// Distance metric to use when building DPs. Defaults to L2.
+    pub metric: DistanceMetric,
+    /// α for the price/volume subspace combination. Defaults to 0.5.
+    pub alpha: f64,
+}
+
+impl Default for StageOneOptions {
+    fn default() -> Self {
+        Self {
+            produce_dp_rp: false,
+            full: false,
+            metric: DistanceMetric::Euclidean,
+            alpha: 0.5,
+        }
+    }
+}
+
+/// Run Stage 1 against a single parquet file for one cell. Defaults to
+/// the no-Stage-2 behaviour; see [`run_stage_one_with_opts`] for the
+/// `--produce-dp-rp` variant.
 pub fn run_stage_one(
     layout: &RunLayout,
     manifest: &mut Manifest,
     cell: &Cell,
     seed: u64,
     parquet_path: &Path,
+) -> Result<StageOneOutcome> {
+    run_stage_one_with_opts(layout, manifest, cell, seed, parquet_path, StageOneOptions::default())
+}
+
+/// Run Stage 1 against a single parquet file for one cell with explicit
+/// options. The parquet file is read once and the resulting snapshot
+/// stream is shared across all three bucketers (cheap clones — only the
+/// per-bucket snapshot vectors are duplicated).
+pub fn run_stage_one_with_opts(
+    layout: &RunLayout,
+    manifest: &mut Manifest,
+    cell: &Cell,
+    seed: u64,
+    parquet_path: &Path,
+    opts: StageOneOptions,
 ) -> Result<StageOneOutcome> {
     let cell_id = cell.id();
     let span = tracing::info_span!(
@@ -89,7 +146,7 @@ pub fn run_stage_one(
     manifest.write_json(&layout.manifest_path())?;
 
     let started = Instant::now();
-    match run_stage_one_inner(layout, cell, seed, parquet_path) {
+    match run_stage_one_inner(layout, cell, seed, parquet_path, opts) {
         Ok(outcome) => {
             let mut rec = CellRunRecord::new(cell_id.clone(), seed);
             rec.status = CellRunStatus::Completed;
@@ -124,6 +181,7 @@ fn run_stage_one_inner(
     cell: &Cell,
     _seed: u64,
     parquet_path: &Path,
+    opts: StageOneOptions,
 ) -> Result<StageOneOutcome> {
     let cell_id = cell.id();
 
@@ -201,6 +259,115 @@ fn run_stage_one_inner(
     let buckets_it = run_bucketer(&mut info_time, &snapshots);
     write_bucket_inventory(layout, &cell_id, "info_time", &buckets_it, &mut written_paths)?;
 
+    // 6. Stage-2 recurrence-layer artifacts (optional).
+    let recurrence = if opts.produce_dp_rp {
+        use takens_rp::bucketer::Clock;
+        let outs = vec![
+            (Clock::Physical, &buckets_phys),
+            (Clock::Event, &buckets_evt),
+            (Clock::InfoTime, &buckets_it),
+        ];
+        let mut all = Vec::with_capacity(outs.len());
+        for (clock, buckets) in outs {
+            let span = tracing::info_span!("stage_two", clock = clock.as_str());
+            let _e = span.enter();
+            let outcome = produce_recurrence_artifacts(
+                layout,
+                &cell_id,
+                clock,
+                buckets,
+                opts.metric,
+                opts.alpha,
+            )?;
+            tracing::info!(
+                clock = clock.as_str(),
+                in_buckets = outcome.n_buckets_in,
+                processed = outcome.n_processed,
+                skipped_below_min = outcome.n_skipped_below_min,
+                skipped_no_baseline = outcome.n_skipped_no_baseline,
+                "recurrence_complete"
+            );
+            for p in &outcome.written {
+                written_paths.push(p.clone());
+            }
+            all.push(outcome);
+        }
+        Some(all)
+    } else {
+        None
+    };
+
+    // 7. Stage-3 statistics (optional: --full).
+    let (stationarity_scores_path, stationarity_spec_version) = if opts.full {
+        use takens_rp::bucketer::Clock;
+
+        let spec = write_and_verify_stationarity_spec(layout)?;
+        written_paths.push(layout.stationarity_spec_path());
+
+        let cell_idx = 0_usize; // single-cell pilot
+        let mut all_raws: Vec<takens_stats::score::RawScalar> = Vec::new();
+
+        for (clock_idx, (clock, buckets)) in [
+            (Clock::Physical, &buckets_phys),
+            (Clock::Event, &buckets_evt),
+            (Clock::InfoTime, &buckets_it),
+        ]
+        .iter()
+        .enumerate()
+        {
+            let span = tracing::info_span!("stage_three", clock = clock.as_str());
+            let _e = span.enter();
+            let records = compute_and_write_rqa_scalars(
+                layout,
+                &cell_id,
+                *clock,
+                buckets,
+                opts.metric,
+                opts.alpha,
+            )?;
+            tracing::info!(
+                clock = clock.as_str(),
+                records = records.len(),
+                "rqa_scalars_complete"
+            );
+            written_paths.push(layout.rqa_scalars_path(&cell_id, clock.as_str()));
+
+            let outcome = run_stage_three_for_clock(
+                layout,
+                &cell_id,
+                cell_idx,
+                *clock,
+                clock_idx,
+                &records,
+                &spec,
+                _seed,
+            )?;
+            for p in &outcome.written {
+                written_paths.push(p.clone());
+            }
+            let n_raws = outcome.raw_scalars.len();
+            all_raws.extend(outcome.raw_scalars);
+            tracing::info!(
+                clock = clock.as_str(),
+                raw_components = n_raws,
+                "stage_three_complete"
+            );
+        }
+
+        // Combine into per-cell Stationarity Score and persist.
+        let scores = write_stationarity_scores(layout, &all_raws, &spec)?;
+        let path = layout.stationarity_scores_path();
+        written_paths.push(path.clone());
+        tracing::info!(
+            n_cells = scores.len(),
+            spec_version = %spec.version,
+            "stationarity_scores_written"
+        );
+        (Some(path), Some(spec.version))
+    } else {
+        (None, None)
+    };
+
     Ok(StageOneOutcome {
         cell: cell_id,
         n_snapshots,
@@ -210,6 +377,9 @@ fn run_stage_one_inner(
         info_time_threshold,
         wallclock_ms: 0, // filled in by caller
         written_paths,
+        recurrence,
+        stationarity_scores_path,
+        stationarity_spec_version,
     })
 }
 
@@ -295,22 +465,4 @@ fn write_bucket_inventory(
 fn snapshot_total(s: &LobSnapshot) -> f64 {
     s.bids.iter().map(|&(_, v)| v).sum::<f64>()
         + s.asks.iter().map(|&(_, v)| v).sum::<f64>()
-}
-
-/// Streaming SHA-256 of a file. Written here rather than imported so we
-/// keep the only `sha2` consumer in one obvious place.
-fn sha256_path(path: &Path) -> Result<String> {
-    use std::io::Read;
-    let mut f = std::fs::File::open(path)
-        .with_context(|| format!("open {}", path.display()))?;
-    let mut buf = [0u8; 64 * 1024];
-    let mut h = Sha256::new();
-    loop {
-        let n = f.read(&mut buf)?;
-        if n == 0 {
-            break;
-        }
-        h.update(&buf[..n]);
-    }
-    Ok(format!("{:x}", h.finalize()))
 }

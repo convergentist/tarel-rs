@@ -24,8 +24,11 @@ pub mod cell;
 pub mod layout;
 pub mod logging;
 pub mod manifest;
+pub mod recurrence;
 pub mod seed;
 pub mod stage_one;
+pub mod stage_three;
+pub mod util;
 
 pub use cell::{Cell, CellId, CellMetadata};
 pub use layout::RunLayout;

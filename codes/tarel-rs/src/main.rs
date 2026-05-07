@@ -23,7 +23,8 @@ use tarel::layout::RunLayout;
 use tarel::logging;
 use tarel::manifest::Manifest;
 use tarel::seed::ExperimentSeed;
-use tarel::stage_one::run_stage_one;
+use tarel::stage_one::{StageOneOptions, run_stage_one_with_opts};
+use tarel::util::sha256_path;
 
 #[derive(Parser, Debug)]
 #[command(
@@ -60,6 +61,18 @@ enum Cmd {
         /// Per-cell seed within the experiment. Defaults to 0.
         #[arg(long, default_value_t = 0)]
         seed: u64,
+
+        /// Also produce Stage-2 recurrence-layer artifacts (per-bucket
+        /// DPs, RPs at RR=5% and RR=1%, 64×64 normalized W-GAN-ready
+        /// tensors, PNG sanity grids).
+        #[arg(long, default_value_t = false)]
+        produce_dp_rp: bool,
+
+        /// Run the full Stage-3 statistical pass: per-bucket RQA scalars,
+        /// KS over 8h sessions, hierarchical variance ratio, Hill
+        /// estimator, per-cell Stationarity Score.
+        #[arg(long, default_value_t = false)]
+        full: bool,
     },
 }
 
@@ -72,6 +85,8 @@ fn main() -> Result<()> {
             runs,
             experiment_seed,
             seed,
+            produce_dp_rp,
+            full,
         } => {
             let exp = parse_seed(&experiment_seed)?;
             let layout = RunLayout::new(&runs, exp);
@@ -83,23 +98,35 @@ fn main() -> Result<()> {
             tracing::info!(
                 experiment_seed = exp.0,
                 runs_root = %runs.display(),
+                produce_dp_rp,
+                full,
                 "tarel_start"
             );
 
             let cell: Cell = cell.parse()?;
 
-            // Load or initialise the manifest. We treat the parquet
-            // path as the data-snapshot identifier when no prior
-            // manifest exists; later stages compute the rolling SHA.
+            // Load or initialise the manifest. The data-snapshot SHA is
+            // the SHA-256 of the input parquet — Stage-5 reproducibility
+            // checks compare this across reruns to guarantee the same
+            // input produced the same outputs.
             let manifest_path = layout.manifest_path();
             let mut manifest = if manifest_path.exists() {
                 Manifest::read_json(&manifest_path)
                     .with_context(|| format!("read {}", manifest_path.display()))?
             } else {
-                Manifest::new(exp, input.display().to_string())
+                let snap_sha = sha256_path(&input)
+                    .with_context(|| format!("sha256({})", input.display()))?;
+                Manifest::new(exp, snap_sha)
             };
 
-            let outcome = run_stage_one(&layout, &mut manifest, &cell, seed, &input)?;
+            let opts = StageOneOptions {
+                produce_dp_rp,
+                full,
+                ..Default::default()
+            };
+            let outcome = run_stage_one_with_opts(
+                &layout, &mut manifest, &cell, seed, &input, opts,
+            )?;
 
             tracing::info!(
                 cell = %outcome.cell,
