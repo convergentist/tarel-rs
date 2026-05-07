@@ -1,9 +1,39 @@
 [package]
 name = "tarel-rs"
-version = "0.0.10"
+version = "0.1.0"
 edition = "2024"
+rust-version = "1.85.0"
+description = "Orchestration + bridge driver for the HFT-RP-WGAN pipeline (NeurIPS 2026)"
+license = "Apache-2.0"
+publish = false
+
+[[bin]]
+name = "tarel"
+path = "src/main.rs"
+
+[lib]
+name = "tarel"
+path = "src/lib.rs"
 
 [dependencies]
-tch = { version = "0.22" }
-anyhow = { version = "1" }
+# Library crates from sibling workspaces.
+takens_rp = { path = "../../../takens-rs/takens-rp", features = ["parquet"] }
+
+# Orchestration plumbing.
+anyhow = "1"
 clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+thiserror = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints.rust]
+unsafe_code = "forbid"
+unused_variables = "warn"
+trivial_casts = "warn"
+trivial_numeric_casts = "warn"

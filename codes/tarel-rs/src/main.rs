@@ -1,160 +1,142 @@
-mod dataset;
-mod export;
-mod model;
-mod train;
+//! `tarel` — orchestration + bridge driver CLI.
+//!
+//! Stage-1 CLI surface (per `engineering_proposal.md` Part I):
+//!
+//! ```text
+//! tarel run-stage-one --cell binance:BTC-USDT \
+//!     --input  /path/to/lob.parquet \
+//!     --runs   ./runs \
+//!     --experiment-seed 0xC001D00D \
+//!     --seed   0
+//! ```
+//!
+//! Stages 2-5 will introduce additional subcommands (`run-stage-two`,
+//! `run-all`, `report`, `verify`); they share this scaffolding.
 
-use anyhow::Result;
-use clap::{Parser, Subcommand};
 use std::path::PathBuf;
-use tch::Device;
 
-use train::WganConfig;
+use anyhow::{Context, Result};
+use clap::{Parser, Subcommand};
 
-#[derive(Parser)]
-#[command(name = "logan-rs", about = "WGAN-GP on limit order book recurrence plots")]
+use tarel::cell::Cell;
+use tarel::layout::RunLayout;
+use tarel::logging;
+use tarel::manifest::Manifest;
+use tarel::seed::ExperimentSeed;
+use tarel::stage_one::run_stage_one;
+
+#[derive(Parser, Debug)]
+#[command(
+    name = "tarel",
+    version,
+    about = "Orchestration + bridge driver for the HFT-RP-WGAN pipeline"
+)]
 struct Cli {
     #[command(subcommand)]
     cmd: Cmd,
 }
 
-#[derive(Subcommand)]
+#[derive(Subcommand, Debug)]
 enum Cmd {
-    /// Train the WGAN-GP on a directory of recurrence plot images.
-    Train {
-        /// Directory containing recurrence plot images (png/jpg).
-        #[arg(short, long)]
-        data: PathBuf,
-
-        /// Path to save the trained generator weights.
-        #[arg(short, long, default_value = "generator.pt")]
-        output: PathBuf,
-
-        /// Number of training epochs.
-        #[arg(long, default_value_t = 200)]
-        epochs: i64,
-
-        /// Batch size.
-        #[arg(long, default_value_t = 64)]
-        batch_size: i64,
-
-        /// Latent vector dimension.
-        #[arg(long, default_value_t = 128)]
-        latent_dim: i64,
-
-        /// Image resize target (square).
-        #[arg(long, default_value_t = 64)]
-        img_size: i64,
-
-        /// Path to save training metrics CSV (e.g. metrics.csv).
+    /// Run Stage 1 (Foundation: ingest → reconstruct → bucket) for a
+    /// single cell against a parquet file.
+    RunStageOne {
+        /// Cell identifier in `<exchange>:<symbol>` form.
         #[arg(long)]
-        metrics: Option<String>,
-    },
+        cell: String,
 
-    /// Export trained weights + tracing script for HuggingFace deployment.
-    Export {
-        /// Path to saved generator weights (.weights.pt produced by train).
+        /// Parquet file with the LOB delta stream for the cell.
         #[arg(short, long)]
-        weights: PathBuf,
+        input: PathBuf,
 
-        /// Output path for the TorchScript model.
-        #[arg(short, long, default_value = "generator_traced.pt")]
-        output: PathBuf,
+        /// `runs/` root directory. Defaults to `./runs`.
+        #[arg(long, default_value = "runs")]
+        runs: PathBuf,
 
-        /// Latent vector dimension (must match training).
-        #[arg(long, default_value_t = 128)]
-        latent_dim: i64,
-    },
+        /// Top-level experiment seed (decimal or `0x`-prefixed hex).
+        #[arg(long, default_value = "0")]
+        experiment_seed: String,
 
-    /// Generate sample images from a traced TorchScript model.
-    Generate {
-        /// Path to TorchScript model (.pt).
-        #[arg(short, long)]
-        model: PathBuf,
-
-        /// Number of samples to generate.
-        #[arg(short, long, default_value_t = 16)]
-        n: i64,
-
-        /// Output directory for generated images.
-        #[arg(short, long, default_value = "samples")]
-        output: PathBuf,
-
-        /// Latent vector dimension.
-        #[arg(long, default_value_t = 128)]
-        latent_dim: i64,
+        /// Per-cell seed within the experiment. Defaults to 0.
+        #[arg(long, default_value_t = 0)]
+        seed: u64,
     },
 }
 
 fn main() -> Result<()> {
     let cli = Cli::parse();
-    let device = Device::cuda_if_available();
-    eprintln!("device: {:?}", device);
-
     match cli.cmd {
-        Cmd::Train {
-            data,
-            output,
-            epochs,
-            batch_size,
-            latent_dim,
-            img_size,
-            metrics,
+        Cmd::RunStageOne {
+            cell,
+            input,
+            runs,
+            experiment_seed,
+            seed,
         } => {
-            let cfg = WganConfig {
-                latent_dim,
-                img_size,
-                batch_size,
-                epochs,
-                metrics_path: metrics,
-                ..Default::default()
+            let exp = parse_seed(&experiment_seed)?;
+            let layout = RunLayout::new(&runs, exp);
+            std::fs::create_dir_all(&layout.run_dir)?;
+
+            // Initialise tracing → JSON-line file under runs/<exp>/logs/.
+            logging::init(&layout.orchestrator_log())?;
+
+            tracing::info!(
+                experiment_seed = exp.0,
+                runs_root = %runs.display(),
+                "tarel_start"
+            );
+
+            let cell: Cell = cell.parse()?;
+
+            // Load or initialise the manifest. We treat the parquet
+            // path as the data-snapshot identifier when no prior
+            // manifest exists; later stages compute the rolling SHA.
+            let manifest_path = layout.manifest_path();
+            let mut manifest = if manifest_path.exists() {
+                Manifest::read_json(&manifest_path)
+                    .with_context(|| format!("read {}", manifest_path.display()))?
+            } else {
+                Manifest::new(exp, input.display().to_string())
             };
 
-            eprintln!("loading recurrence plots from {}", data.display());
-            let dataset = dataset::load_recurrence_plots(&data, cfg.img_size)?;
-            eprintln!("loaded {} images", dataset.size()[0]);
+            let outcome = run_stage_one(&layout, &mut manifest, &cell, seed, &input)?;
 
-            let (vs_g, _vs_c, _metrics) = train::train(&dataset, &cfg, device)?;
-
-            export::export_generator(&vs_g, latent_dim, &output)?;
-            eprintln!("done.");
-        }
-
-        Cmd::Export {
-            weights,
-            output,
-            latent_dim,
-        } => {
-            // Re-create VarStore, load weights, then export
-            let vs_g = tch::nn::VarStore::new(device);
-            let _gen = model::Generator::new(&vs_g.root(), latent_dim);
-            // vs_g.load() expects the file saved by vs.save()
-            // The train command saves to <output>.weights.pt
-            let mut vs_g = vs_g;
-            vs_g.load(&weights)?;
-            export::export_generator(&vs_g, latent_dim, &output)?;
-        }
-
-        Cmd::Generate {
-            model: model_path,
-            n,
-            output,
-            latent_dim,
-        } => {
-            std::fs::create_dir_all(&output)?;
-            let model = export::load_generator(&model_path, device)?;
-            let samples = export::generate_samples(&model, n, latent_dim, device);
-
-            // Denormalise from [-1, 1] to [0, 255] and save as PNG
-            let samples = ((samples + 1.0) * 127.5).clamp(0.0, 255.0).to_kind(tch::Kind::Uint8);
-
-            for i in 0..n {
-                let img = samples.get(i); // [1, H, W]
-                let path = output.join(format!("sample_{i:04}.png"));
-                tch::vision::image::save(&img, &path)?;
-                eprintln!("saved {}", path.display());
-            }
+            tracing::info!(
+                cell = %outcome.cell,
+                snapshots = outcome.n_snapshots,
+                physical = outcome.n_buckets_physical,
+                event = outcome.n_buckets_event,
+                info_time = outcome.n_buckets_info_time,
+                info_time_threshold = ?outcome.info_time_threshold,
+                "tarel_done"
+            );
         }
     }
-
     Ok(())
+}
+
+fn parse_seed(s: &str) -> Result<ExperimentSeed> {
+    let s = s.trim();
+    let value = if let Some(rest) = s.strip_prefix("0x").or_else(|| s.strip_prefix("0X")) {
+        u64::from_str_radix(rest, 16)
+            .with_context(|| format!("invalid hex seed: '{s}'"))?
+    } else {
+        s.parse::<u64>()
+            .with_context(|| format!("invalid decimal seed: '{s}'"))?
+    };
+    Ok(ExperimentSeed(value))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_seed_decimal_and_hex() {
+        assert_eq!(parse_seed("0").unwrap().0, 0);
+        assert_eq!(parse_seed("42").unwrap().0, 42);
+        assert_eq!(parse_seed("0xCAFE").unwrap().0, 0xCAFE);
+        assert_eq!(parse_seed("0xCAFEBABEDEADBEEF").unwrap().0, 0xCAFEBABEDEADBEEF);
+        assert!(parse_seed("not a number").is_err());
+    }
 }
