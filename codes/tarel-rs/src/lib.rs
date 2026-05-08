@@ -28,6 +28,7 @@ pub mod recurrence;
 pub mod seed;
 pub mod stage_one;
 pub mod stage_three;
+pub mod stage_two;
 pub mod util;
 
 pub use cell::{Cell, CellId, CellMetadata};

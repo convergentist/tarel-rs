@@ -24,6 +24,7 @@ use tarel::logging;
 use tarel::manifest::Manifest;
 use tarel::seed::ExperimentSeed;
 use tarel::stage_one::{StageOneOptions, run_stage_one_with_opts};
+use tarel::stage_two::{StageTwoOptions, run_stage_two};
 use tarel::util::sha256_path;
 
 #[derive(Parser, Debug)]
@@ -73,6 +74,37 @@ enum Cmd {
         /// estimator, per-cell Stationarity Score.
         #[arg(long, default_value_t = false)]
         full: bool,
+    },
+
+    /// Run Stage-2 (Stage-4 in the proposal lexicon) — W-GAN-GP
+    /// training across (cell, seed, clock) triples with four-axis
+    /// diagnostics, then aggregate per-cell Stability Scores.
+    RunStageTwo {
+        /// Comma-separated list of cell identifiers.
+        #[arg(long)]
+        cells: String,
+
+        /// Number of seeds per cell. Production grid uses 20 seeds; the
+        /// pilot uses 3.
+        #[arg(long, default_value_t = 3)]
+        seeds: u64,
+
+        /// Per-seed wallclock budget in minutes (default 20).
+        #[arg(long, default_value_t = 20)]
+        budget_mins: u64,
+
+        /// `runs/` root directory.
+        #[arg(long, default_value = "runs")]
+        runs: PathBuf,
+
+        /// Top-level experiment seed (decimal or `0x`-prefixed hex).
+        #[arg(long, default_value = "0")]
+        experiment_seed: String,
+
+        /// Optional comma-separated list of clocks
+        /// (default: physical,event,info_time).
+        #[arg(long)]
+        clocks: Option<String>,
     },
 }
 
@@ -136,6 +168,61 @@ fn main() -> Result<()> {
                 info_time = outcome.n_buckets_info_time,
                 info_time_threshold = ?outcome.info_time_threshold,
                 "tarel_done"
+            );
+        }
+
+        Cmd::RunStageTwo {
+            cells,
+            seeds,
+            budget_mins,
+            runs,
+            experiment_seed,
+            clocks,
+        } => {
+            let exp = parse_seed(&experiment_seed)?;
+            let layout = RunLayout::new(&runs, exp);
+            std::fs::create_dir_all(&layout.run_dir)?;
+            logging::init(&layout.orchestrator_log())?;
+
+            tracing::info!(
+                experiment_seed = exp.0,
+                runs_root = %runs.display(),
+                seeds,
+                budget_mins,
+                "tarel_stage_two_start"
+            );
+
+            // Parse cell list.
+            let cell_objs: Result<Vec<Cell>, _> = cells
+                .split(',')
+                .map(|s| s.trim().parse::<Cell>())
+                .collect();
+            let cell_objs = cell_objs?;
+
+            let manifest_path = layout.manifest_path();
+            let mut manifest = if manifest_path.exists() {
+                Manifest::read_json(&manifest_path)
+                    .with_context(|| format!("read {}", manifest_path.display()))?
+            } else {
+                Manifest::new(exp, "(stage_two)")
+            };
+
+            let opts = StageTwoOptions {
+                experiment: exp,
+                cells: cell_objs,
+                n_seeds: seeds,
+                budget_mins,
+                clocks: clocks.map(|s| {
+                    s.split(',').map(|p| p.trim().to_string()).collect()
+                }),
+            };
+            let outcome = run_stage_two(&layout, &mut manifest, &opts)?;
+            tracing::info!(
+                n_runs = outcome.n_runs,
+                n_completed = outcome.n_completed,
+                n_failed = outcome.n_failed,
+                stability_scores_path = %outcome.stability_scores_path.display(),
+                "tarel_stage_two_done"
             );
         }
     }

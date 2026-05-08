@@ -125,6 +125,27 @@ impl RunLayout {
             .join(format!("{seed:020}"))
     }
 
+    /// Pre-registered StabilityScoreSpec on disk for this run.
+    pub fn stability_spec_path(&self) -> PathBuf {
+        self.run_dir.join("stage_two").join("StabilityScoreSpec.json")
+    }
+
+    /// Per-cell stability scores (one record per cell).
+    pub fn stability_scores_path(&self) -> PathBuf {
+        self.run_dir.join("stage_two").join("stability_scores.json")
+    }
+
+    /// Stage-2 normalized DP-tensor source dir for `(cell, clock)` —
+    /// what `tarel run-stage-one --produce-dp-rp` produced and what
+    /// `logan train --data` reads.
+    pub fn stage_two_dataset_dir(&self, cell: &CellId, clock: &str) -> PathBuf {
+        self.stage_one_dir()
+            .join("recurrence")
+            .join(cell.as_str().replace(':', "_"))
+            .join(clock)
+            .join("normalized")
+    }
+
     pub fn figures_dir(&self) -> PathBuf {
         self.run_dir.join("figures")
     }
