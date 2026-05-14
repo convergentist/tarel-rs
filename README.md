@@ -2,7 +2,7 @@
 
 # \[#\] Title
 
-Temporal Adversarial Reconstruction of High Frequency Latent Spaces
+Temporal Adversarial Reconstruction of High Frequency Latent Spaces in Crypto Markets
 
 # \[#\] Abstract
 
@@ -10,10 +10,10 @@ Latent Spaces are ...
 
 # \[#\] Media
 
-- Github : [TAReL-NeurIPS2026](https://github.com/convergentist/TAReL-NeurIPS2026)
-- Pre-print : [pending](https://github.com/convergentist/TAReL-NeurIPS2026)
-- HuggingFace Space : [pending](https://github.com/convergentist/TAReL-NeurIPS2026)
-- Papers-with-code : [pending](https://github.com/convergentist/TAReL-NeurIPS2026)
+- Github : [TAReL](https://github.com/convergentist/TAReL)
+- Arxiv (Pre-print) : [pending](https://github.com/convergentist/TAReL)
+- HuggingFace Space : [pending](https://github.com/convergentist/TAReL)
+- Papers-with-code : [pending](https://github.com/convergentist/TAReL)
 
 # \[#\] Project structure
 
