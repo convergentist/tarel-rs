@@ -1,0 +1,13 @@
+\blockhead{opEdge}{Block 6 --- Stage 3 operator
+$\mathrm{ConvT}^{256 \to 128}_{k=4,\,s=2,\,p=1} \circ \mathrm{BN} \circ
+\sigma_{\mathrm{ReLU}}$}
+
+Structurally identical to Stage 2 except for the channel widths. The
+transposed convolution again doubles spatial extent ($8 \to 16$) and
+halves channels ($256 \to 128$). The choice to keep the kernel size
+fixed at 4 across all upsampling stages is a deliberate design choice: a
+stride-2, kernel-4, padding-1 transposed convolution has a receptive
+field of two input cells per output cell, which gives every output
+position information from two distinct input positions and avoids the
+checkerboard artefacts that a stride-2-kernel-3 configuration is known
+to produce.

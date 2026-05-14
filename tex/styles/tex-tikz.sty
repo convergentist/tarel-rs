@@ -1,0 +1,33 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tex-tikz}[2026/05/13 TeX TikZ styles]
+\RequirePackage{tikz}
+\RequirePackage{tex-colors}
+\usetikzlibrary{positioning,arrows.meta,calc,fit,backgrounds}
+\tikzset{
+  state/.style={
+    rectangle, rounded corners=2.5pt,
+    draw=stateEdge, line width=0.6pt, fill=stateFill,
+    minimum width=6.4cm, minimum height=0.95cm,
+    align=center, inner sep=5pt
+  },
+  iostate/.style={
+    rectangle, rounded corners=2.5pt,
+    draw=ioEdge, line width=0.7pt, fill=ioFill,
+    minimum width=6.4cm, minimum height=1.05cm,
+    align=center, inner sep=5pt
+  },
+  op/.style={
+    rectangle, rounded corners=2pt,
+    draw=opEdge, line width=0.5pt, fill=opFill,
+    align=center, inner sep=4pt, font=\footnotesize
+  },
+  arr/.style={
+    -{Stealth[length=2.6mm,width=2.0mm]},
+    line width=1.0pt, draw=arrowCol
+  },
+  stagelabel/.style={
+    font=\footnotesize\bfseries, text=stateEdge,
+    anchor=east, align=right
+  }
+}
+\endinput

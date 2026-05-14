@@ -1,0 +1,81 @@
+%% content/figures/generator-architecture.tex
+%% Pure body. Assumes the driver provides:
+%%   - tikz + libraries (positioning, arrows.meta, calc, fit, backgrounds)
+%%   - tex-tikz.sty   (state / iostate / op / arr / stagelabel styles)
+%%   - tex-colors.sty (palette)
+%%   - tex-math.sty   (amsmath, amssymb, \ConvT, \Reals, \Normal, ...)
+
+\begin{tikzpicture}[
+    >={Stealth[length=2.6mm, width=2.0mm]},
+    font=\small
+]
+
+%% ---- input -------------------------------------------------------------
+\node[iostate] (z) {%
+  $\displaystyle z \sim \Normal\!\left(\mathbf{0},\, \mathbf{I}_{128}\right)
+  \;\Longrightarrow\; z \in \Reals^{128 \times 1 \times 1}$%
+};
+
+%% ---- stage 1 -----------------------------------------------------------
+\node[state, below=1.45cm of z] (h1)
+  {$\mathbf{h}^{(1)} \in \Reals^{512 \times 4 \times 4}$};
+\draw[arr] (z) -- (h1) node[op, midway] (op1) {%
+  \textbf{Stage 1}\\[1pt]
+  $\ConvT{128 \rightarrow 512}{4}{1}{0}$\\[1pt]
+  $\circ\;\BN\;\circ\;\ReLU$%
+};
+
+%% ---- stage 2 -----------------------------------------------------------
+\node[state, below=1.45cm of h1] (h2)
+  {$\mathbf{h}^{(2)} \in \Reals^{256 \times 8 \times 8}$};
+\draw[arr] (h1) -- (h2) node[op, midway] (op2) {%
+  \textbf{Stage 2}\\[1pt]
+  $\ConvT{512 \rightarrow 256}{4}{2}{1}$\\[1pt]
+  $\circ\;\BN\;\circ\;\ReLU$%
+};
+
+%% ---- stage 3 -----------------------------------------------------------
+\node[state, below=1.45cm of h2] (h3)
+  {$\mathbf{h}^{(3)} \in \Reals^{128 \times 16 \times 16}$};
+\draw[arr] (h2) -- (h3) node[op, midway] (op3) {%
+  \textbf{Stage 3}\\[1pt]
+  $\ConvT{256 \rightarrow 128}{4}{2}{1}$\\[1pt]
+  $\circ\;\BN\;\circ\;\ReLU$%
+};
+
+%% ---- stage 4 -----------------------------------------------------------
+\node[state, below=1.45cm of h3] (h4)
+  {$\mathbf{h}^{(4)} \in \Reals^{64 \times 32 \times 32}$};
+\draw[arr] (h3) -- (h4) node[op, midway] (op4) {%
+  \textbf{Stage 4}\\[1pt]
+  $\ConvT{128 \rightarrow 64}{4}{2}{1}$\\[1pt]
+  $\circ\;\BN\;\circ\;\ReLU$%
+};
+
+%% ---- stage 5 (terminal: no BN, tanh) -----------------------------------
+\node[iostate, below=1.55cm of h4] (y)
+  {$G_\theta(z) \in [-1, 1]^{\,1 \times 64 \times 64}$};
+\draw[arr] (h4) -- (y) node[op, midway] (op5) {%
+  \textbf{Stage 5}\\[1pt]
+  $\ConvT{64 \rightarrow 1}{4}{2}{1}$\\[1pt]
+  $\circ\;\Tanh(\cdot)$%
+};
+
+%% ---- side annotations: spatial resolution per layer --------------------
+\node[stagelabel] at ($(h1.west)+(-0.35cm,0)$) {$4 \times 4$};
+\node[stagelabel] at ($(h2.west)+(-0.35cm,0)$) {$8 \times 8$};
+\node[stagelabel] at ($(h3.west)+(-0.35cm,0)$) {$16 \times 16$};
+\node[stagelabel] at ($(h4.west)+(-0.35cm,0)$) {$32 \times 32$};
+\node[stagelabel] at ($(y.west) +(-0.35cm,0)$) {$64 \times 64$};
+
+%% ---- decorative frame around the pipeline ------------------------------
+\begin{scope}[on background layer]
+  \node[
+    draw=black!25, line width=0.4pt,
+    rounded corners=4pt, fill=black!2,
+    fit=(z) (y) (op1) (op2) (op3) (op4) (op5),
+    inner xsep=10pt, inner ysep=6pt
+  ] {};
+\end{scope}
+
+\end{tikzpicture}

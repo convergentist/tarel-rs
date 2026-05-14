@@ -1,0 +1,10 @@
+\blockhead{stateEdge}{Block 9 --- Hidden state
+$\mathbf{h}^{(4)} \in \mathbb{R}^{64 \times 32 \times 32}$}
+
+The fourth and final internal feature map, $64 \cdot 32 \cdot 32 =
+65\,536$ scalars. The activations at this layer have the same spatial
+extent as a half-resolution recurrence plot and 64 channels of feature
+information. Empirically, this is where most of the high-frequency
+texture of the target recurrence plot is encoded; the final stage's
+role is mainly to project this rich feature representation down to one
+channel and apply the squashing nonlinearity.

@@ -1,0 +1,19 @@
+\section*{Why this exact configuration}
+
+The architecture is a faithful instantiation of the DCGAN/W-GAN-GP
+generator family, with three deliberate choices recorded here so that
+they can be revisited as ablations rather than absorbed silently into
+the spec. \textbf{Latent dimension $128$:} a standard choice for
+$64 \times 64$ image generation, large enough to provide capacity for
+the target distribution without inflating the optimisation landscape's
+condition number. \textbf{Kernel size $4$ with stride $2$ and padding
+$1$:} chosen over $(3, 2, 1)$ to avoid checkerboard artefacts and over
+$(5, 2, 2)$ to keep parameter count manageable; the $(4, 2, 1)$ choice
+is the one for which every output position sees an evenly tiled
+receptive field of two input cells. \textbf{No batch-normalisation in
+the terminal stage:} explicitly motivated so that the final $\tanh$
+can produce arbitrary-mean outputs aligned with the per-bucket
+min--max-normalised training distribution. None of these three choices
+is novel; the contribution is the locked, pre-registered combination
+that allows the seed-variance of training to be measured on a stable
+architectural baseline.

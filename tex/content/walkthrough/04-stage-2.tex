@@ -1,0 +1,14 @@
+\blockhead{opEdge}{Block 4 --- Stage 2 operator
+$\mathrm{ConvT}^{512 \to 256}_{k=4,\,s=2,\,p=1} \circ \mathrm{BN} \circ
+\sigma_{\mathrm{ReLU}}$}
+
+From Stage 2 onward, the architectural pattern stabilises: stride 2,
+padding 1, kernel 4, channel halving. This is the canonical DCGAN
+upsampling block. The stride-2 transposed convolution doubles each
+spatial dimension; with output padding implicit in the
+$(k, s, p) = (4, 2, 1)$ choice, the input $4 \times 4$ becomes
+$8 \times 8$ \emph{exactly}, with no off-by-one artefacts. The channel
+halving $512 \to 256$ is a budgeted re-allocation of capacity from
+channels to space: as the feature maps grow, each individual feature
+plane carries less channel-specific information but a richer spatial
+pattern. The BN and ReLU follow for the same reasons as in Stage 1.

@@ -1,0 +1,10 @@
+\blockhead{stateEdge}{Block 7 --- Hidden state
+$\mathbf{h}^{(3)} \in \mathbb{R}^{128 \times 16 \times 16}$}
+
+Third internal feature map, $128 \cdot 16 \cdot 16 = 32\,768$ scalars.
+By this layer the network has committed to a $16 \times 16$
+approximation of the recurrence plot, which in 64-pixel terms
+corresponds to a coarse-quantised version of the target image.
+Empirically, mode-coverage diagnostics computed against generators at
+this depth tend to detect diversity correctly but cannot distinguish
+between near-duplicates at the finest scale.

@@ -1,0 +1,15 @@
+\blockhead{ioEdge}{Block 11 --- Generated sample
+$G_\theta(z) \in [-1, 1]^{\,1 \times 64 \times 64}$}
+
+The output is a single-channel image of size $64 \times 64$ with
+per-pixel values in $[-1, 1]$. Multiplying by the persisted
+$(\min, \max)$ tuple of any training bucket inverts the per-bucket
+normalisation and recovers a distance-plot value with the same units as
+the original Euclidean pairwise distance. The output passes downstream
+into three independent post-hoc analyses without further
+parameterisation: (i) the critic $D_\phi$, which scores it during
+training; (ii) the mode-coverage nearest-neighbour search, which
+compares it against the training tensor bank at each $5{,}000$-step
+checkpoint; and (iii) optional visual inspection or downstream regime
+classification, which can use $G_\theta(z)$ as a synthetic
+recurrence-plot data point.

@@ -1,0 +1,12 @@
+\section*{Block-by-block reading}
+
+The diagram is read top-to-bottom. \emph{Green} blocks denote
+input/output tensors that live at the boundary of the network and that an
+external consumer is meant to observe ($z$ and $G_\theta(z)$). \emph{Blue}
+blocks denote internal hidden activations $\mathbf{h}^{(\ell)}$ that the
+network materializes during the forward pass and discards afterward.
+\emph{Amber} blocks denote the parameterized operators that map one
+tensor state to the next. Side labels on the left record the spatial
+resolution $H^{(\ell)} \times W^{(\ell)}$ at each layer, making the
+doubling pattern $4 \to 8 \to 16 \to 32 \to 64$ explicit. Below we walk
+through every block in the order in which the forward pass visits them.

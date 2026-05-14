@@ -1,0 +1,35 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{tex-math}[2026/05/13 TeX math macros]
+
+%% AMS math/symbol packages (provides \mathbb, \mathcal, \DeclareMathOperator, etc.)
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+
+%% --- Project-wide math macros --------------------------------------------
+%%   \ConvT{<channels>}{<kernel>}{<stride>}{<padding>}
+%%   e.g. \ConvT{128 \to 512}{4}{1}{0}
+\newcommand{\ConvT}[4]{%
+  \mathrm{ConvT}^{\,#1}_{k=#2,\,s=#3,\,p=#4}%
+}
+
+%% Activations / normalisation operators
+\newcommand{\BN}{\mathrm{BN}}
+\newcommand{\ReLU}{\sigma_{\mathrm{ReLU}}}
+\newcommand{\Tanh}{\tanh}
+
+%% RQA scalars and TAReL scores
+\newcommand{\RR}{\mathrm{RR}}
+\newcommand{\DET}{\mathrm{DET}}
+\newcommand{\LAM}{\mathrm{LAM}}
+\newcommand{\TT}{\mathrm{TT}}
+\newcommand{\ENTR}{\mathrm{ENTR}}
+\newcommand{\Lmax}{L_{\max}}
+\newcommand{\score}[1]{S^{\text{#1}}}
+
+%% Distributions and spaces shortcuts
+\newcommand{\Reals}{\mathbb{R}}
+\newcommand{\Nset}{\mathbb{N}}
+\newcommand{\Normal}{\mathcal{N}}
+
+\endinput

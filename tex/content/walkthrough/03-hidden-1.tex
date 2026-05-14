@@ -1,0 +1,13 @@
+\blockhead{stateEdge}{Block 3 --- Hidden state
+$\mathbf{h}^{(1)} \in \mathbb{R}^{512 \times 4 \times 4}$}
+
+This is the first internal feature map the generator produces. It
+contains $512 \cdot 4 \cdot 4 = 8\,192$ scalars, organised as 512 spatial
+``feature pictures'' on a $4 \times 4$ grid. The high channel count gives
+the network enough capacity to encode, in distributed form, the relevant
+modes of the target distribution; the small spatial extent makes that
+encoding compact. In a recurrence-plot context, this layer can be thought
+of as the network's coarsest decision about \emph{global recurrence
+structure} --- whether the plot is diagonal-dominated, block-dominated,
+or speckle-dominated --- before any fine-grained spatial detail is
+committed.

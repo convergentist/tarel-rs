@@ -15,6 +15,12 @@ Latent Spaces are ...
 - HuggingFace Space : [pending](https://github.com/convergentist/TAReL-NeurIPS2026)
 - Papers-with-code : [pending](https://github.com/convergentist/TAReL-NeurIPS2026)
 
+# \[#\] Project structure
+
+- Datasets: LOB - RP
+- Models: w-GAN-gp
+- Metrics: 
+
 # \[#\] Cite
 
 ```bibtex

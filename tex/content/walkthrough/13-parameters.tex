@@ -1,0 +1,19 @@
+\section*{Parameter accounting}
+
+A complete count of the learnable parameters in $G_\theta$ illustrates
+the budget choices implicit in the architecture. The five transposed
+convolutions contribute, by stage,
+$128 \cdot 512 \cdot 4 \cdot 4 = 1\,048\,576$,
+$512 \cdot 256 \cdot 4 \cdot 4 = 2\,097\,152$,
+$256 \cdot 128 \cdot 4 \cdot 4 = 524\,288$,
+$128 \cdot 64 \cdot 4 \cdot 4 = 131\,072$, and
+$64 \cdot 1 \cdot 4 \cdot 4 = 1\,024$ weight scalars respectively (plus
+a small bias per output channel that we omit). The four BN layers
+contribute $2(c_1 + c_2 + c_3 + c_4) = 2(512 + 256 + 128 + 64) =
+1\,920$ scalars. Roughly $3.8$~million learnable parameters in total.
+Stage~2 dominates the budget because both its input and output channel
+counts are large; stage~5 is essentially free. This concentration of
+capacity in the middle layers is intentional: the early-middle stages
+of a transposed-convolutional generator are where the bulk of
+distributional structure is committed, while the late stages mainly
+perform geometric refinement.

@@ -1,0 +1,53 @@
+% drivers/notes.tex
+% Companion document: generator architecture, block-by-block.
+\documentclass{tex-notes}
+
+\title{\vspace{-2em}Generator Architecture: Block-by-Block Specification\\
+  {\large \textnormal{%
+    $G_\theta : \mathbb{R}^{128} \longrightarrow [-1, 1]^{1 \times 64 \times 64}$%
+  }}}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-2.5em}
+
+%% =====================================================================
+%% Diagram
+%% =====================================================================
+\begin{figure}[h]
+\centering
+\resizebox{!}{0.78\textheight}{%
+  \input{content/figures/generator-architecture}%
+}
+\caption{Generator $G_\theta$ as a deterministic deep
+transposed-convolutional map from latent code $z$ to a single-channel
+$64 \times 64$ image.}
+\end{figure}
+
+%% =====================================================================
+%% Per-block walkthrough
+%% =====================================================================
+\input{content/walkthrough/00-overview}
+
+\input{content/walkthrough/01-input-z}
+\input{content/walkthrough/02-stage-1}
+\input{content/walkthrough/03-hidden-1}
+\input{content/walkthrough/04-stage-2}
+\input{content/walkthrough/05-hidden-2}
+\input{content/walkthrough/06-stage-3}
+\input{content/walkthrough/07-hidden-3}
+\input{content/walkthrough/08-stage-4}
+\input{content/walkthrough/09-hidden-4}
+\input{content/walkthrough/10-stage-5}
+\input{content/walkthrough/11-output}
+
+%% =====================================================================
+%% Closing sections
+%% =====================================================================
+\input{content/walkthrough/12-annotations}
+\input{content/walkthrough/13-parameters}
+\input{content/walkthrough/14-rationale}
+
+\end{document}

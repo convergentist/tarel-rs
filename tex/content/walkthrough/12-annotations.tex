@@ -1,0 +1,13 @@
+\section*{Side annotations and arrows}
+
+The five labels on the left edge of the pipeline ($4 \times 4,\,
+8 \times 8,\, 16 \times 16,\, 32 \times 32,\, 64 \times 64$) record the
+spatial resolution of the hidden state immediately to their right. They
+make visible at a glance the geometric-progression structure
+$H^{(\ell)} = 2 H^{(\ell-1)}$ for $\ell = 2, \ldots, 5$ that
+distinguishes Stages 2--5 from the dimensional-lifting Stage 1. The
+arrows between blocks denote ordinary forward-pass data flow: at
+training time the adjoint flow (backpropagation) traverses the same
+edges in reverse, collecting gradients with respect to every parameter
+in $\theta = \bigcup_{\ell=1}^{5}\{W_\ell, b_\ell\} \cup
+\bigcup_{\ell=1}^{4}\{\gamma_\ell, \beta_\ell\}$.

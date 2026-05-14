@@ -1,0 +1,11 @@
+\blockhead{opEdge}{Block 8 --- Stage 4 operator
+$\mathrm{ConvT}^{128 \to 64}_{k=4,\,s=2,\,p=1} \circ \mathrm{BN} \circ
+\sigma_{\mathrm{ReLU}}$}
+
+The penultimate upsampling stage. Channel halving $128 \to 64$ and
+spatial doubling $16 \to 32$ continue the canonical pattern. This is
+the last stage that uses batch normalisation; the terminal stage drops
+BN deliberately so that the final activation can centre at any value
+the target distribution prefers without being forced through a
+per-channel zero-mean constraint. The BN here is still active because
+the layer is still operating in feature space, not output space.

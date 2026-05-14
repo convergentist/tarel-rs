@@ -1,0 +1,17 @@
+\blockhead{opEdge}{Block 2 --- Stage 1 operator
+$\mathrm{ConvT}^{128 \to 512}_{k=4,\,s=1,\,p=0} \circ \mathrm{BN} \circ
+\sigma_{\mathrm{ReLU}}$}
+
+Stage 1 is the only stage that does \emph{not} double the spatial
+resolution; its job is to lift the latent vector into a small but
+high-channel spatial grid. The transposed convolution
+$W_1 \in \mathbb{R}^{128 \times 512 \times 4 \times 4}$ with stride 1 and
+zero padding expands the $1 \times 1$ spatial extent of $z$ to
+$4 \times 4$ while contracting the channel count from a high latent
+dimensionality (128) to an even higher feature-channel count (512).
+Intuitively, the network is buying \emph{spatial expressiveness} at the
+cost of \emph{channel expressiveness}; subsequent stages reverse this
+trade. The output is then passed through batch normalization
+$\mathrm{BN}_1(\cdot; \gamma_1, \beta_1)$, which centres and scales each
+channel across the mini-batch, and a pointwise ReLU activation
+$\sigma_{\mathrm{ReLU}}(x) = \max(0, x)$.

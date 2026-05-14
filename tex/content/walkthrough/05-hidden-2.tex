@@ -1,0 +1,13 @@
+\blockhead{stateEdge}{Block 5 --- Hidden state
+$\mathbf{h}^{(2)} \in \mathbb{R}^{256 \times 8 \times 8}$}
+
+This is the second internal feature map, with $256 \cdot 8 \cdot 8 =
+16\,384$ scalars. The shape doubling is the first instance of the
+\emph{progressive-upsampling invariant} that holds throughout the rest
+of the network: each subsequent stage takes the previous spatial extent
+and doubles it while halving the channel count, keeping the total tensor
+volume roughly constant in this layer ($16\,384$ vs.\ $8\,192$ in
+$\mathbf{h}^{(1)}$, growing by exactly a factor of two; the same factor
+will recur). At this resolution the network begins to commit to
+medium-scale recurrence-plot structures such as diagonal bands and
+rectangular regimes.

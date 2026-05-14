@@ -1,0 +1,5 @@
+ensure_path('TEXINPUTS', './classes//', './styles//', './content//');
+@default_files = ('drivers/article.tex',
+                  'drivers/figure-generator.tex',
+                  'drivers/notes.tex');
+$pdf_mode = 1;

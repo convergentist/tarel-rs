@@ -1,0 +1,16 @@
+\blockhead{ioEdge}{Block 1 --- Latent input
+$z \in \mathbb{R}^{128 \times 1 \times 1}$}
+
+The latent vector $z$ is drawn from an isotropic Gaussian
+$\mathcal{N}(\mathbf{0}, \mathbf{I}_{128})$ with $d_z = 128$. It is
+presented to the network not as a flat 128-vector but as a degenerate
+3-D tensor with shape $128 \times 1 \times 1$, i.e.\ 128 channels at a
+$1 \times 1$ spatial grid. This reshape is a notational convenience that
+lets the first stage be written as a transposed convolution rather than a
+linear projection followed by a reshape; the two are arithmetically
+equivalent when the kernel and output spatial size both equal four and
+stride is one. The choice of an isotropic Gaussian prior is standard for
+W-GAN-GP: the Kantorovich--Rubinstein duality used to derive the
+gradient-penalty objective requires only that the prior have a tractable
+density and full support on its support set, and
+$\mathcal{N}(\mathbf{0}, \mathbf{I}_{128})$ satisfies both.
