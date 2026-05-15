@@ -1,7 +1,8 @@
 //! Stage-1 orchestration entry point.
 //!
-//! `tarel run-stage-one --cell <id> --input <parquet>` runs the
-//! foundation pipeline for a single cell:
+//! `tarel run-stage-one --cell <id> --input <parquet>`, e.g. 
+//! tarel run-stage-one --cell binance:BTC-USDC --input <path/to/ob_data.parquet>
+//! runs the foundation pipeline for a single cell:
 //!
 //! 1. Read the parquet file via [`takens_rp::ingest::read_deltas`].
 //! 2. Reconstruct LOB snapshots via [`takens_rp::book::reconstruct`].

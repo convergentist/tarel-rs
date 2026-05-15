@@ -1,9 +1,9 @@
 [package]
 name = "datasets-stats"
-version = "0.1.0"
+version = "0.0.10"
 edition = "2024"
 rust-version = "1.85.0"
-description = "Descriptive statistics over the raw/ orderbook + trades parquet datasets (TAReL / NeurIPS 2026)"
+description = "Descriptive statistics over the raw/ orderbook + trades parquet datasets"
 license = "Apache-2.0"
 publish = false
 

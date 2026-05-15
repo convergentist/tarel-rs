@@ -1,7 +1,7 @@
 # datasets-stats
 
 Standalone descriptive report over the raw parquet datasets used by the
-TAReL (NeurIPS 2026) pipeline. It walks
+TAReL pipeline. It walks
 `datasets/raw/<exchange>/<orderbooks|trades>/*.parquet` and prints, for each
 dataset kind:
 
@@ -17,11 +17,14 @@ dataset kind:
 
 ## Usage
 
-```bash
-# from the datasets/ folder (with raw/ alongside)
-cargo run --release --manifest-path codes/datasets-stats/Cargo.toml -- ./raw
+from the tarel/ folder
 
-# or, from this crate
+```bash
+cargo run --release --manifest-path codes/datasets-stats/Cargo.toml -- datasets/raw
+```
+or, from this crate
+
+```bash
 cd codes/datasets-stats
 cargo run --release -- ../../datasets/raw
 ```

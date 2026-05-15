@@ -1,3 +1,15 @@
+
+# Stage-one
+
+while in `codes/tarel-rs` ... 
+
+```bash
+cargo run tarel run-stage-one --cell binance:BTC
+-USDC --input ../../datasets/raw/binance/orderbooks/binance_BTC-USDC_ob_sync_20260507_041711.731.parq
+uet
+```
+
+
 # tarel-rs (rust)
 
 The `template-rs`
