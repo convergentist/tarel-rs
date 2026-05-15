@@ -218,13 +218,29 @@ fn run_stage_one_inner(
     );
 
     // 4. Persist cell_metadata.json (R6.x).
+    //
+    // Two SHAs:
+    //   - data_snapshot_sha256: bytewise hash of the consolidated parquet
+    //     as it sits on disk (sensitive to parquet re-encoding).
+    //   - source_corpus_sha256: lifted from the parquet's footer KV (set
+    //     by takens_consolidate), invariant to encoding, tight to the
+    //     raw flush-time source files. `None` if the input was not
+    //     produced by takens_consolidate.
     let snapshot_sha = sha256_path(parquet_path)?;
+    let source_corpus_sha256 =
+        takens_rp::consolidate::read_source_corpus_sha256(parquet_path).with_context(|| {
+            format!(
+                "lift takens.consolidate.source_corpus_sha256 from {}",
+                parquet_path.display()
+            )
+        })?;
     let metadata = CellMetadata {
         cell: cell_id.clone(),
         info_time_threshold,
         calibration_warmup_n: warmup_n,
         target_band_ns: (INFO_TIME_TARGET_LO_NS, INFO_TIME_TARGET_HI_NS),
         data_snapshot_sha256: snapshot_sha,
+        source_corpus_sha256,
         k_bins_per_side: K_BINS_PER_SIDE,
     };
     metadata.write_json(&layout.cell_metadata_path(&cell_id))?;

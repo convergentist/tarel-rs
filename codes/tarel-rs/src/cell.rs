@@ -77,7 +77,26 @@ pub struct CellMetadata {
     /// bounds, in nanoseconds; pinned to [30s, 120s] in Stage 1).
     pub target_band_ns: (u64, u64),
     /// Hex-encoded SHA-256 of the data snapshot used for calibration.
+    ///
+    /// This is a *bytewise* hash of the consolidated parquet file as it
+    /// sits on disk. It changes whenever the parquet encoding changes,
+    /// even if the underlying logical data is unchanged. Use
+    /// [`Self::source_corpus_sha256`] to track "did the source data
+    /// change?" independently of encoding.
     pub data_snapshot_sha256: String,
+    /// Hex-encoded `takens.consolidate.source_corpus_sha256` lifted from
+    /// the input parquet's footer key-value metadata.
+    ///
+    /// This is the SHA-256 of the sorted `(filename, file_sha256)` tuple
+    /// list produced at consolidation time — invariant to parquet
+    /// re-encoding, tight to the raw flush-time source files.
+    ///
+    /// `None` if the input parquet has no `takens.consolidate.*` footer
+    /// (e.g. a raw flush-time parquet was passed directly to Stage-1
+    /// without first being consolidated). In that case downstream
+    /// reproducibility falls back to [`Self::data_snapshot_sha256`].
+    #[serde(default)]
+    pub source_corpus_sha256: Option<String>,
     /// `K_BINS_PER_SIDE` in effect at calibration time. Pinned so a
     /// downstream change to the constant invalidates the metadata.
     pub k_bins_per_side: usize,
@@ -135,6 +154,7 @@ mod tests {
             calibration_warmup_n: 4096,
             target_band_ns: (30_000_000_000, 120_000_000_000),
             data_snapshot_sha256: "abc123".into(),
+            source_corpus_sha256: Some("def456".into()),
             k_bins_per_side: 25,
         };
         let dir = tempdir().unwrap();
