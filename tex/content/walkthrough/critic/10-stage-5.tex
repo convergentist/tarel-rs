@@ -1,0 +1,20 @@
+\blockhead{opEdge}{Block 10 --- Stage 5 operator
+$\mathrm{Conv}^{512 \to 1}_{k=4,\,s=1,\,p=0}$ (no activation)}
+
+The terminal stage of the critic differs from the previous four in
+three respects: (i) the channel count collapses from 512 to 1, matching
+the scalar nature of the Wasserstein score; (ii) the kernel size
+matches the spatial extent of $\mathbf{h}^{(4)}$, so the stride-1
+zero-padded convolution collapses the $4 \times 4 \times 512$ volume to
+a $1 \times 1 \times 1$ scalar in a single step; (iii) there is no
+activation function on the output. The absence of a final activation is
+deliberate. A sigmoid would constrain the output to $(0, 1)$, which is
+fine for the classic GAN binary-classification objective but
+incompatible with the Wasserstein-1 dual formulation: the
+Kantorovich--Rubinstein duality requires
+$D_\phi(\mathbf{x}) \in \mathbb{R}$, not $D_\phi(\mathbf{x}) \in (0,
+1)$. A tanh would similarly bound the score and prevent the gradient
+penalty from being computed against a genuine unbounded scalar field.
+Leaving the output raw lets the difference of expectations
+$\mathbb{E}_{\mathbb{P}_r}[D_\phi] - \mathbb{E}_{\mathbb{P}_g}[D_\phi]$
+approximate $W_1$ directly.

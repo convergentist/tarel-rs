@@ -1,0 +1,15 @@
+\blockhead{stateEdge}{Block 3 --- Hidden state
+$\mathbf{h}^{(1)} \in \mathbb{R}^{64 \times 32 \times 32}$}
+
+This is the critic's first internal feature map. It contains
+$64 \cdot 32 \cdot 32 = 65\,536$ scalars, organised as 64 spatial
+``feature pictures'' on a $32 \times 32$ grid. Compared with the
+generator's penultimate hidden state $\mathbf{h}^{(4)}$ (also of shape
+$64 \times 32 \times 32$), this layer plays the dual role: where the
+generator was about to commit to high-frequency texture, the critic
+has just begun extracting it. The 64 channels at this stage already
+encode early-vision features that any subsequent layer can recombine ---
+edges, blob orientations, intensity gradients --- in the
+recurrence-plot context, the building blocks out of which diagonal
+lines, vertical laminae, and block clusters will be assembled by
+deeper stages.

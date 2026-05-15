@@ -1,0 +1,22 @@
+\blockhead{opEdge}{Block 2 --- Stage 1 operator
+$\mathrm{Conv}^{1 \to 64}_{k=4,\,s=2,\,p=1} \circ
+\sigma_{\mathrm{LReLU}}(0.2)$}
+
+Stage 1 is the structural dual of the generator's terminal stage: a
+stride-2 convolution with kernel size 4 and padding 1 that halves the
+spatial extent ($64 \to 32$) while expanding the channel count from 1 to
+64. The kernel tensor $W_1 \in \mathbb{R}^{1 \times 64 \times 4 \times
+4}$ sees, at each output position, a $4 \times 4$ patch of the input
+image, and the stride-2 step guarantees that consecutive output cells
+tile the input with the same kind of evenly-spaced receptive-field
+overlap that makes the generator's transposed convolutions
+artefact-free. The activation is a leaky-ReLU with negative slope
+$0.2$: $\sigma_{\mathrm{LReLU}}(x) = \max(0.2\,x,\,x)$. The leakiness
+matters here because the critic is updated five times per generator
+step under the locked $n_{\mathrm{critic}} = 5$ schedule, so any dead
+neurons that emerge during early training would cripple the inner
+loop's effectiveness. There is, deliberately, \emph{no} batch
+normalisation in any stage of the critic: batch normalisation
+introduces cross-sample dependence inside each mini-batch, which
+invalidates the i.i.d.\ assumption of the per-sample gradient penalty
+that enforces $D_\phi$'s 1-Lipschitz property.

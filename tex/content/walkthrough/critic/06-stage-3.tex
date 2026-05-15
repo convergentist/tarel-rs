@@ -1,0 +1,16 @@
+\blockhead{opEdge}{Block 6 --- Stage 3 operator
+$\mathrm{Conv}^{128 \to 256}_{k=4,\,s=2,\,p=1} \circ
+\sigma_{\mathrm{LReLU}}(0.2)$}
+
+Structurally identical to Stage 2 except for the channel widths: input
+128, output 256. Spatial extent halves once more ($16 \to 8$); channels
+double ($128 \to 256$). The activation is again leaky-ReLU with the
+$0.2$ negative slope. Note that, unlike the generator, there is no
+$\mathrm{BN}$ between the convolution and the activation. This is not
+an oversight but a load-bearing design choice: introducing
+$\mathrm{BN}$ at this depth would couple the critic's evaluations of
+different samples in the same mini-batch, which in turn would render the
+per-sample gradient penalty
+$\mathbb{E}_{\hat{\mathbf{x}}}[(\|\nabla_{\hat{\mathbf{x}}}
+D_\phi(\hat{\mathbf{x}})\|_2 - 1)^2]$ a function of the entire mini-batch
+rather than a function of each interpolant individually.

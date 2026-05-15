@@ -1,0 +1,54 @@
+% drivers/notes-critic.tex
+% Companion document: critic architecture, block-by-block.
+\documentclass{tex-notes}
+
+\title{\vspace{-2em}Critic Architecture: Block-by-Block Specification\\
+  {\large \textnormal{%
+    $D_\phi : [-1, 1]^{1 \times 64 \times 64} \longrightarrow \mathbb{R}$%
+  }}}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-2.5em}
+
+%% =====================================================================
+%% Diagram
+%% =====================================================================
+\begin{figure}[h]
+\centering
+\resizebox{!}{0.78\textheight}{%
+  \input{content/figures/critic/critic-architecture}%
+}
+\caption{Critic $D_\phi$ as a deterministic deep convolutional map from a
+single-channel $64 \times 64$ image to an unbounded real-valued score
+approximating the Wasserstein-1 distance under the
+Kantorovich--Rubinstein duality.}
+\end{figure}
+
+%% =====================================================================
+%% Per-block walkthrough
+%% =====================================================================
+\input{content/walkthrough/critic/00-overview}
+
+\input{content/walkthrough/critic/01-input-image}
+\input{content/walkthrough/critic/02-stage-1}
+\input{content/walkthrough/critic/03-hidden-1}
+\input{content/walkthrough/critic/04-stage-2}
+\input{content/walkthrough/critic/05-hidden-2}
+\input{content/walkthrough/critic/06-stage-3}
+\input{content/walkthrough/critic/07-hidden-3}
+\input{content/walkthrough/critic/08-stage-4}
+\input{content/walkthrough/critic/09-hidden-4}
+\input{content/walkthrough/critic/10-stage-5}
+\input{content/walkthrough/critic/11-output}
+
+%% =====================================================================
+%% Closing sections
+%% =====================================================================
+\input{content/walkthrough/critic/12-annotations}
+\input{content/walkthrough/critic/13-parameters}
+\input{content/walkthrough/critic/14-rationale}
+
+\end{document}

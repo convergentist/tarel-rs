@@ -1,0 +1,17 @@
+\blockhead{ioEdge}{Block 1 --- Input image
+$\mathbf{x} \in [-1, 1]^{\,1 \times 64 \times 64}$}
+
+The input to the critic is a single-channel $64 \times 64$ tensor whose
+per-pixel values are bounded in $[-1, 1]$. During training, this tensor
+comes from one of two sources: a \emph{real} batch sampled uniformly
+from the training tensor bank (a per-bucket min--max-normalised
+recurrence plot persisted by Stage~2 of the pipeline), or a \emph{fake}
+batch produced by the generator $G_\theta(z)$ for fresh
+$z \sim \mathcal{N}(\mathbf{0}, \mathbf{I}_{128})$. Both occupy the same
+support $[-1, 1]^{1 \times 64 \times 64}$ by construction; the critic
+itself is never told which source produced a given input. That symmetry
+is what makes the Wasserstein-1 estimator
+$\mathbb{E}_{\mathbf{x} \sim \mathbb{P}_r}[D_\phi(\mathbf{x})] -
+\mathbb{E}_{\mathbf{x} \sim \mathbb{P}_g}[D_\phi(\mathbf{x})]$ a
+meaningful quantity: each expectation is computed against $D_\phi$'s
+\emph{undiscriminating} scoring of inputs from the two distributions.

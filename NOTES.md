@@ -2,7 +2,6 @@
 
 ## TODO
 
-
 ## Improvement Notes
 
 1. There was an issue for SHIB-USDC, SOL-USDC, TON-USDC from Binance (Incomplete)

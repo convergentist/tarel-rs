@@ -1,0 +1,14 @@
+\blockhead{stateEdge}{Block 7 --- Hidden state
+$\mathbf{h}^{(3)} \in \mathbb{R}^{256 \times 8 \times 8}$}
+
+Third internal feature map, $256 \cdot 8 \cdot 8 = 16\,384$ scalars. By
+this depth, the network has compressed the input recurrence plot down
+to an $8 \times 8$ spatial summary encoded in 256 channels. The
+information-theoretic intuition is that a $1 \times 64 \times 64$
+binary-or-near-binary recurrence plot has, by construction, only a
+modest amount of resolvable structure (its target recurrence rate is
+$5\%$, so most pixels carry redundant information), and a $256 \times
+8 \times 8$ feature map has more than enough capacity to summarise that
+structure while remaining compact enough to score globally. The
+critic's later stages compress this representation further into a
+scalar.

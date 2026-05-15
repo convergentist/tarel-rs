@@ -1,0 +1,9 @@
+[0] Config.pm:328> INFO - This is Biber 2.21
+[0] Config.pm:331> INFO - Logfile is 'artifacts/article/article.blg'
+[22] biber-darwin:342> INFO - === vie. may 15, 2026, 00:19:00
+[28] Biber.pm:421> INFO - Reading 'artifacts/article/article.bcf'
+[53] Biber.pm:1002> INFO - Found 0 citekeys in bib section 0
+[58] bbl.pm:676> INFO - Writing 'artifacts/article/article.bbl' with encoding 'UTF-8'
+[58] bbl.pm:779> INFO - Output to artifacts/article/article.bbl
+[59] Biber.pm:132> WARN - The file 'artifacts/article/article.bcf' does not contain any citations!
+[59] Biber.pm:134> INFO - WARNINGS: 1

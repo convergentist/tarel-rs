@@ -1,0 +1,14 @@
+\blockhead{stateEdge}{Block 5 --- Hidden state
+$\mathbf{h}^{(2)} \in \mathbb{R}^{128 \times 16 \times 16}$}
+
+The second internal feature map, with $128 \cdot 16 \cdot 16 =
+32\,768$ scalars. This is the first instance of the critic's
+\emph{progressive-downsampling invariant}: each subsequent stage takes
+the previous spatial extent and halves it while doubling the channel
+count, so the total tensor volume stays approximately constant in each
+hidden layer (here $32\,768$ vs.\ $65\,536$ in $\mathbf{h}^{(1)}$ ---
+actually halving, not constant; the volume contracts gradually until
+the terminal projection). At this resolution the critic is processing
+medium-scale recurrence-plot structure such as diagonal bands and
+rectangular regimes, the very same structures that the generator commits
+to at its corresponding $\mathbf{h}^{(2)}$.

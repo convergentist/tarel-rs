@@ -1,0 +1,14 @@
+\blockhead{stateEdge}{Block 9 --- Hidden state
+$\mathbf{h}^{(4)} \in \mathbb{R}^{512 \times 4 \times 4}$}
+
+The fourth and final internal feature map, $512 \cdot 4 \cdot 4 =
+8\,192$ scalars. This is the topological mirror of the generator's
+$\mathbf{h}^{(1)}$ (also $512 \times 4 \times 4$): where the generator
+\emph{started} building an image from this representation, the critic
+has just \emph{finished} compressing one. The fact that the two
+networks meet in the middle at this tensor shape is a coincidence of
+the locked architecture rather than an enforced constraint, but it is
+intuitively comforting: the generator and critic operate on the same
+\emph{latent geometry} at their narrowest point, and the gradient signal
+that flows backward through the critic informs the generator's design
+of features at the corresponding depth.

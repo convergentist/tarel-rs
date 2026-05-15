@@ -1,0 +1,16 @@
+\section*{Block-by-block reading}
+
+The critic $D_\phi$ is the topological dual of the generator: it consumes
+a $1 \times 64 \times 64$ image (either a real training tensor or a fake
+$G_\theta(z)$) and emits a single real-valued score whose difference of
+expectations over $\mathbb{P}_r$ and $\mathbb{P}_g$ approximates the
+Wasserstein-1 distance $W_1(\mathbb{P}_r, \mathbb{P}_g)$. The diagram
+is again read top-to-bottom and uses the same colour convention as the
+generator companion: \emph{green} blocks denote tensors at the network
+boundary ($\mathbf{x}$ and $D_\phi(\mathbf{x})$), \emph{blue} blocks
+denote internal feature maps $\mathbf{h}^{(\ell)}$ that the critic
+materializes and discards during a forward pass, and \emph{amber} blocks
+denote the parameterised operators. The side labels record the spatial
+resolution at each layer; in the critic, that resolution is \emph{halved}
+at every stage, mirroring the generator's doubling pattern. Below we walk
+through every block in the order in which the forward pass visits them.

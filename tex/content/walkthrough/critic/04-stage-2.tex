@@ -1,0 +1,16 @@
+\blockhead{opEdge}{Block 4 --- Stage 2 operator
+$\mathrm{Conv}^{64 \to 128}_{k=4,\,s=2,\,p=1} \circ
+\sigma_{\mathrm{LReLU}}(0.2)$}
+
+Stage 2 sets the canonical downsampling pattern that the next two
+stages will repeat: stride 2, padding 1, kernel 4, channel doubling.
+Each spatial dimension halves ($32 \to 16$); the channel count doubles
+($64 \to 128$). This budgeted trade --- spatial expressiveness for
+channel expressiveness --- is the exact inverse of the generator's
+channel-halving, spatial-doubling pattern, and is what gives the
+critic-generator pair its overall topological symmetry. The $(4, 2, 1)$
+configuration is preferred over $(3, 2, 1)$ for the same
+checkerboard-avoidance reason that motivated the generator's choice: at
+stride 2, kernel 4, padding 1, every output cell sees exactly two input
+cells, with no overlap-induced amplification or attenuation that would
+introduce systematic spatial bias.

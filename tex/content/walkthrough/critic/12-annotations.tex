@@ -1,0 +1,15 @@
+\section*{Side annotations and arrows}
+
+The five labels on the left edge of the pipeline ($32 \times 32,\,
+16 \times 16,\, 8 \times 8,\, 4 \times 4,\, 1 \times 1$) record the
+spatial resolution of the hidden state immediately to their right. They
+make visible at a glance the geometric-progression structure
+$H^{(\ell)} = H^{(\ell - 1)} / 2$ for $\ell = 1, \ldots, 4$ that
+distinguishes Stages 1--4 from the dimensional-collapsing Stage 5. The
+arrows between blocks denote ordinary forward-pass data flow; at
+training time the adjoint flow (backpropagation) traverses the same
+edges in reverse, collecting gradients with respect to every parameter
+in $\phi = \bigcup_{\ell=1}^{5}\{W_\ell, b_\ell\}$. There are
+\emph{no} batch-normalisation parameters in this set: the critic
+deliberately omits BN at every stage to keep each forward pass an
+independent function of its own input.

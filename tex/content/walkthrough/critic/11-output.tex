@@ -1,0 +1,20 @@
+\blockhead{ioEdge}{Block 11 --- Wasserstein score
+$D_\phi(\mathbf{x}) \in \mathbb{R}$}
+
+The output is a single real number per input image, unbounded in
+either direction. Its absolute scale carries no information --- only
+the \emph{difference} between average scores of real and fake batches
+matters --- so reading individual scores in isolation is not
+meaningful. The two ways the score is consumed during training are: (i)
+the Earth-Mover-gap diagnostic, which tracks
+$\mathbb{E}_{\text{real}}[D_\phi] - \mathbb{E}_{\text{fake}}[D_\phi]$
+per critic step and feeds the final-100-step mean and standard
+deviation into the four-axis Stability Score; (ii) the gradient-penalty
+loss, which differentiates $D_\phi$ with respect to interpolants
+$\hat{\mathbf{x}} = \alpha \mathbf{x}_{\mathrm{real}} + (1 - \alpha)
+G_\theta(z)$ and penalises departures from $\|\nabla_{\hat{\mathbf{x}}}
+D_\phi(\hat{\mathbf{x}})\|_2 = 1$. Both consumers use the raw scalar
+output without any further normalisation, so $D_\phi$'s final stage is
+the literal arithmetic dual of the generator's terminal $\tanh$: the
+generator squashes onto $[-1, 1]$; the critic emits onto $(-\infty,
++\infty)$.

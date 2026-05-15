@@ -1,0 +1,15 @@
+\blockhead{opEdge}{Block 8 --- Stage 4 operator
+$\mathrm{Conv}^{256 \to 512}_{k=4,\,s=2,\,p=1} \circ
+\sigma_{\mathrm{LReLU}}(0.2)$}
+
+The penultimate downsampling stage. Channel doubling $256 \to 512$ and
+spatial halving $8 \to 4$ continue the canonical pattern. This is the
+last stage that uses the stride-2, padding-1 configuration; the
+terminal stage that follows is structurally different (kernel 4, stride
+1, padding 0) because its job is no longer to downsample but to
+\emph{collapse} a $4 \times 4 \times 512$ feature volume into a single
+scalar. Stage 4 leaves behind a feature map whose spatial extent
+matches the kernel size of the next stage --- by design --- so the
+terminal $4 \times 4$ convolution receives exactly one position's
+worth of input at a time and is, in effect, a per-position linear
+projection.

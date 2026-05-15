@@ -1,5 +1,54 @@
+# =============================================================================
+# TAReL — latexmk configuration
+# =============================================================================
+# Each driver compiles into its own ./artifacts/<kind>/ folder so the working
+# tree stays tidy.  The output directory is selected automatically from the
+# driver named on the command line:
+#
+#   latexmk drivers/article.tex            ->  artifacts/article/
+#   latexmk drivers/notes-generator.tex    ->  artifacts/notes/
+#   latexmk drivers/notes-critic.tex       ->  artifacts/notes/
+#   latexmk drivers/figure-generator.tex   ->  artifacts/figures/
+#   latexmk drivers/figure-critic.tex      ->  artifacts/figures/
+#
+# To build every driver in one go, use the Makefile sitting next to this file
+# (`make all`).  A single `latexmk` invocation cannot fan-out across multiple
+# output directories on its own, so per-driver routing is handled here and
+# multi-driver builds are handled by `make`.
+# =============================================================================
+
 ensure_path('TEXINPUTS', './classes//', './styles//', './content//');
-@default_files = ('drivers/article.tex',
-                  'drivers/figure-generator.tex',
-                  'drivers/notes.tex');
-$pdf_mode = 1;
+$pdf_mode    = 1;
+$bibtex_use  = 2;          # biber/bibtex runs automatically when needed
+
+# --- per-driver routing table ------------------------------------------------
+our %artifact_dir = (
+    'article.tex'           => 'artifacts/article',
+    'notes-generator.tex'   => 'artifacts/notes',
+    'notes-critic.tex'      => 'artifacts/notes',
+    'figure-generator.tex'  => 'artifacts/figures',
+    'figure-critic.tex'     => 'artifacts/figures',
+);
+
+# Inspect @ARGV: the first non-flag argument that matches a known driver
+# decides where every aux/log/synctex/pdf lands.
+foreach my $arg (@ARGV) {
+    next if $arg =~ /^-/;                          # skip flags
+    foreach my $driver (keys %artifact_dir) {
+        if ($arg =~ /\Q$driver\E\z/) {
+            $out_dir = $artifact_dir{$driver};
+            $aux_dir = $artifact_dir{$driver};
+            unless (-d $out_dir) {
+                require File::Path;
+                File::Path::make_path($out_dir);
+            }
+            last;
+        }
+    }
+    last if $out_dir;                              # stop at first match
+}
+
+# --- cleaning ----------------------------------------------------------------
+# Make `latexmk -c` / `latexmk -C` also wipe biblatex/synctex by-products.
+$clean_ext      = 'synctex.gz synctex.gz(busy) run.xml bbl';
+$clean_full_ext = 'synctex.gz synctex.gz(busy) run.xml bbl';

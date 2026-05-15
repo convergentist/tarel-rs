@@ -13,9 +13,16 @@
   \mathrm{ConvT}^{\,#1}_{k=#2,\,s=#3,\,p=#4}%
 }
 
+%%   \Conv{<channels>}{<kernel>}{<stride>}{<padding>}
+%%   Non-transposed 2-D convolution (used by the critic).
+\newcommand{\Conv}[4]{%
+  \mathrm{Conv}^{\,#1}_{k=#2,\,s=#3,\,p=#4}%
+}
+
 %% Activations / normalisation operators
 \newcommand{\BN}{\mathrm{BN}}
 \newcommand{\ReLU}{\sigma_{\mathrm{ReLU}}}
+\newcommand{\LReLU}{\sigma_{\mathrm{LReLU}}}
 \newcommand{\Tanh}{\tanh}
 
 %% RQA scalars and TAReL scores

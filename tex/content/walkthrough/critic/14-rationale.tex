@@ -1,0 +1,32 @@
+\section*{Why this exact configuration}
+
+The critic mirrors the generator's locked DCGAN/W-GAN-GP family, with
+four deliberate choices recorded here so that they can be revisited as
+ablations rather than absorbed silently into the spec.
+\textbf{Leaky-ReLU with slope $\alpha = 0.2$:} chosen over ReLU because
+the critic is updated $n_{\mathrm{critic}} = 5$ times per generator
+step, so any dead neurons that emerge early in training would cripple
+the inner optimisation loop; the $0.2$ slope follows the original
+DCGAN choice and the W-GAN-GP reference implementation.
+\textbf{No batch-normalisation in \emph{any} stage:} the per-sample
+gradient penalty
+$\mathbb{E}_{\hat{\mathbf{x}}}[(\|\nabla_{\hat{\mathbf{x}}}
+D_\phi(\hat{\mathbf{x}})\|_2 - 1)^2]$ requires the critic to be a
+function of \emph{one} input at a time, which BN's cross-sample
+statistics would break; layer-normalisation would be an acceptable
+alternative under WGAN-LP, but our locked spec follows the original
+WGAN-GP paper, which prescribes no normalisation. \textbf{No final
+activation:} the Kantorovich--Rubinstein duality requires
+$D_\phi(\mathbf{x}) \in \mathbb{R}$, and any squashing function
+(sigmoid, tanh) would destroy the unboundedness on which the
+Wasserstein-1 estimator depends.
+\textbf{Kernel $4$ with stride $2$ and padding $1$ for Stages 1--4, and
+kernel $4$ with stride $1$ and padding $0$ for Stage 5:} the first
+configuration tiles input receptive fields exactly two-to-one, avoiding
+checkerboard-like spatial bias; the second configuration is sized so
+that the receptive field equals the input spatial extent at that depth,
+which makes the terminal stage a per-position linear projection
+collapsing $4 \times 4 \times 512 \to 1$. As with the generator, none
+of these four choices is individually novel; the contribution is the
+pre-registered combination that lets the four-axis stability
+diagnostic be defined against a fixed architectural baseline.

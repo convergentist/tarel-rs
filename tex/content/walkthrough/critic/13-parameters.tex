@@ -1,0 +1,26 @@
+\section*{Parameter accounting}
+
+A complete count of the learnable parameters in $D_\phi$ illustrates
+the budget choices implicit in the architecture. The five convolutions
+contribute, by stage,
+$1 \cdot 64 \cdot 4 \cdot 4 = 1\,024$,
+$64 \cdot 128 \cdot 4 \cdot 4 = 131\,072$,
+$128 \cdot 256 \cdot 4 \cdot 4 = 524\,288$,
+$256 \cdot 512 \cdot 4 \cdot 4 = 2\,097\,152$, and
+$512 \cdot 1 \cdot 4 \cdot 4 = 8\,192$ weight scalars respectively
+(plus a small bias per output channel, omitted here). There are no
+batch-normalisation parameters because BN is absent throughout. The
+total is roughly $2.76$~million learnable parameters --- approximately
+$73\%$ of the generator's $\sim 3.80$~million. Stage~4 dominates the
+budget because both its input and output channel counts are large, the
+mirror of the generator's Stage~2 dominance. This back-loaded
+allocation of capacity is intentional: the early critic stages perform
+geometric reduction whose statistics are largely a function of local
+image structure, while the deeper stages aggregate that structure into
+a global verdict and therefore need more capacity. The
+generator-critic parameter ratio of roughly $1.4$ to $1$ is a typical
+W-GAN-GP balance; pushing the critic too small relative to the
+generator leads to the so-called ``mode collapse onto the critic's
+blind spots'' failure mode, while a critic that is too large relative
+to the generator wastes training budget on a Lipschitz constraint that
+is already tight.
