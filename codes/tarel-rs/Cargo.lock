@@ -1048,7 +1048,11 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
+<<<<<<< HEAD
  "ndarray",
+=======
+ "ndarray 0.16.1",
+>>>>>>> ff034f0 (local commits ultradian)
  "rmp-serde",
  "serde",
  "serde_json",
@@ -1132,6 +1136,22 @@ dependencies = [
 
 [[package]]
 name = "ndarray"
+<<<<<<< HEAD
+=======
+version = "0.15.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "adb12d4e967ec485a5f71c6311fe28158e9d6f4bc4a447b474184d0f91a8fa32"
+dependencies = [
+ "matrixmultiply",
+ "num-complex",
+ "num-integer",
+ "num-traits",
+ "rawpointer",
+]
+
+[[package]]
+name = "ndarray"
+>>>>>>> ff034f0 (local commits ultradian)
 version = "0.16.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "882ed72dce9365842bf196bdeedf5055305f11fc8c03dee7bb0194a6cad34841"
@@ -1710,7 +1730,11 @@ dependencies = [
  "anyhow",
  "arrow",
  "nalgebra",
+<<<<<<< HEAD
  "ndarray",
+=======
+ "ndarray 0.16.1",
+>>>>>>> ff034f0 (local commits ultradian)
  "parquet",
  "png",
  "rayon",
@@ -1731,12 +1755,20 @@ dependencies = [
 
 [[package]]
 name = "tarel-rs"
+<<<<<<< HEAD
 version = "0.0.10"
+=======
+version = "0.1.0"
+>>>>>>> ff034f0 (local commits ultradian)
 dependencies = [
  "anyhow",
  "clap",
  "logan-rs",
+<<<<<<< HEAD
  "ndarray",
+=======
+ "ndarray 0.16.1",
+>>>>>>> ff034f0 (local commits ultradian)
  "rmp-serde",
  "serde",
  "serde_json",
@@ -1752,14 +1784,24 @@ dependencies = [
 
 [[package]]
 name = "tch"
+<<<<<<< HEAD
 version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9e09b91610202dc4820c21eb474a42b386ef69f323b1c0902b5472ba7456ebb5"
+=======
+version = "0.18.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bb3500c87ef72447c23b33ed6f15fac45a616b09bcac53e62e0e4386bddb3b9d"
+>>>>>>> ff034f0 (local commits ultradian)
 dependencies = [
  "half",
  "lazy_static",
  "libc",
+<<<<<<< HEAD
  "ndarray",
+=======
+ "ndarray 0.15.6",
+>>>>>>> ff034f0 (local commits ultradian)
  "rand",
  "safetensors",
  "thiserror",
@@ -1850,9 +1892,15 @@ dependencies = [
 
 [[package]]
 name = "torch-sys"
+<<<<<<< HEAD
 version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aef40c585e342df95b66a1fa7c923188623999c2b657227befb481dfb03a6a42"
+=======
+version = "0.18.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "61b87ed41261d4278060c3ba3e735c224687cf312403e4565f2ca75310279d73"
+>>>>>>> ff034f0 (local commits ultradian)
 dependencies = [
  "anyhow",
  "cc",

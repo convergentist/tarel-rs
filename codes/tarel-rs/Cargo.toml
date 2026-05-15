@@ -3,7 +3,7 @@ name = "tarel-rs"
 version = "0.0.10"
 edition = "2024"
 rust-version = "1.85.0"
-description = "Orchestration + bridge driver for the HFT-RP-WGAN pipeline (NeurIPS 2026)"
+description = "Orchestration + bridge driver for the HFT-RP-WGAN pipeline"
 license = "Apache-2.0"
 publish = false
 
@@ -20,7 +20,7 @@ path = "src/lib.rs"
 takens_rp = { path = "../../../takens-rs/takens-rp", features = ["parquet"] }
 takens_stats = { path = "../../../takens-rs/takens-stats" }
 logan-rs = { path = "../../../logan-rs" }
-tch = { version = "0.22" }
+tch = { version = "0.18" }
 
 # Orchestration plumbing.
 anyhow = { version = "1" }
