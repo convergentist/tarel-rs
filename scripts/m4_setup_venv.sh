@@ -1,21 +1,25 @@
 #!/usr/bin/env bash
 # ──────────────────────────────────────────────────────────────────────────────
-# setup_mac_venv.sh
+# m4_setup_venv.sh
 #
 # One-time setup of a pyenv-managed virtualenv for tarel-rs development on
-# Apple Silicon (M1–M4) Macs. Creates `mac_tarel_venv` with Python 3.12 and
-# pins PyTorch to the version whose libtorch C++ ABI matches `tch = "0.22"`
-# (the version pinned by tarel-rs and logan-rs).
+# Apple Silicon (M4) Mac. 
+# Creates `m4_tarel_venv` with Python 3.12 and PyTorch 2.5.1 + CUDA
+# These are necessary to match `tch = "0.18"` in both tarel-rs and logan-rs 
+# Cargo.toml files.
 #
 # Why these exact versions:
 #
-# - tch 0.22.0 generates C++ FFI bindings against the PyTorch 2.5.x ABI.
-#   Calling `torch::_fused_rms_norm(...)` with 4 arguments (tch 0.22) only
-#   matches PyTorch 2.5; PyTorch 2.6 changed it to 7 args. Calling
-#   `torch::_cudnn_attention_backward(...)` only resolves on PyTorch 2.5.
-# - PyTorch 2.5.x wheels exist for Python 3.9–3.12 only. Python 3.13 (the
-#   default in your current pyenv) has no compatible torch wheel — that's
-#   why pulling PyTorch in your existing env force-installs torch 2.6+.
+# - tarel-rs and logan-rs are pinned to tch 0.18 (see their Cargo.toml).
+#   tch 0.18 was generated against PyTorch 2.5.x; later tch releases chase
+#   an unstable moving target in PyTorch's private ATen API, with no
+#   released PyTorch wheel exactly matching tch 0.20/0.21/0.22.
+# - PyTorch 2.5.x has been GA since October 2024 (mature wheels for
+#   Apple Silicon), supports Python 3.9–3.12, and ships the strong_type.h
+#   libc++ fix so Xcode 16 CLT doesn't error on `is_arithmetic`
+#   specialization.
+# - We use Python 3.12 for the venv: stable, fast, and avoids your
+#   existing 3.13.9 (where pip would force-install a newer torch).
 # - The libc++ `is_arithmetic` specialization error comes from newer
 #   Xcode CLT (16+) enforcing `_LIBCPP_NO_SPECIALIZATIONS` on standard
 #   traits. PyTorch 2.5's bundled `c10/util/strong_type.h` predates the
@@ -29,7 +33,7 @@
 set -euo pipefail
 
 PY_VERSION="${PY_VERSION:-3.12.7}"
-VENV_NAME="${VENV_NAME:-mac_tarel_venv}"
+VENV_NAME="${VENV_NAME:-m4_tarel_venv}"
 TORCH_VERSION="${TORCH_VERSION:-2.5.1}"
 
 # Sanity-check pyenv + pyenv-virtualenv are available.
@@ -73,7 +77,7 @@ Setup complete.
 Per-shell usage (run these before \`cargo build\` in tarel-rs or logan-rs):
 
     pyenv shell $VENV_NAME
-    source $(pwd)/scripts/mac_env.sh
+    source $(pwd)/scripts/m4_tarel_env.sh
     cargo build --release
 
 ────────────────────────────────────────────────────────────────────────────

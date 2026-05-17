@@ -1054,7 +1054,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
- "ndarray",
+ "ndarray 0.16.1",
  "rmp-serde",
  "serde",
  "serde_json",
@@ -1134,6 +1134,19 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "ndarray"
+version = "0.15.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "adb12d4e967ec485a5f71c6311fe28158e9d6f4bc4a447b474184d0f91a8fa32"
+dependencies = [
+ "matrixmultiply",
+ "num-complex",
+ "num-integer",
+ "num-traits",
+ "rawpointer",
 ]
 
 [[package]]
@@ -1718,7 +1731,7 @@ dependencies = [
  "chrono",
  "hex",
  "nalgebra",
- "ndarray",
+ "ndarray 0.16.1",
  "parquet",
  "png",
  "rayon",
@@ -1745,7 +1758,7 @@ dependencies = [
  "anyhow",
  "clap",
  "logan-rs",
- "ndarray",
+ "ndarray 0.16.1",
  "rmp-serde",
  "serde",
  "serde_json",
@@ -1761,14 +1774,14 @@ dependencies = [
 
 [[package]]
 name = "tch"
-version = "0.22.0"
+version = "0.18.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e09b91610202dc4820c21eb474a42b386ef69f323b1c0902b5472ba7456ebb5"
+checksum = "bb3500c87ef72447c23b33ed6f15fac45a616b09bcac53e62e0e4386bddb3b9d"
 dependencies = [
  "half",
  "lazy_static",
  "libc",
- "ndarray",
+ "ndarray 0.15.6",
  "rand",
  "safetensors",
  "thiserror",
@@ -1859,9 +1872,9 @@ dependencies = [
 
 [[package]]
 name = "torch-sys"
-version = "0.22.0"
+version = "0.18.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aef40c585e342df95b66a1fa7c923188623999c2b657227befb481dfb03a6a42"
+checksum = "61b87ed41261d4278060c3ba3e735c224687cf312403e4565f2ca75310279d73"
 dependencies = [
  "anyhow",
  "cc",

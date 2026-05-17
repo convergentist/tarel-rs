@@ -1,5 +1,5 @@
 [package]
-name = "datasets-stats"
+name = "tarel-stats"
 version = "0.0.10"
 edition = "2024"
 rust-version = "1.85.0"
@@ -8,7 +8,7 @@ license = "Apache-2.0"
 publish = false
 
 [[bin]]
-name = "datasets-stats"
+name = "tarel-stats"
 path = "src/main.rs"
 
 [dependencies]

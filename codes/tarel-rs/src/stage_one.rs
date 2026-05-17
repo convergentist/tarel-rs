@@ -1,8 +1,11 @@
+//!
 //! Stage-1 orchestration entry point.
 //!
-//! `tarel run-stage-one --cell <id> --input <parquet>`, e.g. 
+//! The command is: `tarel run-stage-one --cell <id> --input <parquet>`
+//! e.g. 
 //! tarel run-stage-one --cell binance:BTC-USDC --input <path/to/ob_data.parquet>
-//! runs the foundation pipeline for a single cell:
+//!
+//! This runs the foundation pipeline for a single cell, resulting in this actions:
 //!
 //! 1. Read the parquet file via [`takens_rp::ingest::read_deltas`].
 //! 2. Reconstruct LOB snapshots via [`takens_rp::book::reconstruct`].
@@ -15,9 +18,6 @@
 //!    `runs/<seed>/stage_one/buckets/<cell>/<clock>/`.
 //! 5. Update the run [`Manifest`].
 //!
-//! Stages 2-5 will extend this with DP/RP generation, RQA, the
-//! Stationarity Score, the W-GAN training loop, and bridge analysis;
-//! Stage 1 only takes the pipeline through the bucketer outputs.
 
 use std::path::{Path, PathBuf};
 use std::time::Instant;

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ──────────────────────────────────────────────────────────────────────────────
-# gpu_monitor.sh — live NVIDIA GPU monitor for the Ultradian
+# ultradian_gpu_monitor.sh — live NVIDIA GPU monitor for the Ultradian
 #
 # Refreshes every $INTERVAL seconds (default 5). Per-device row shows
 # utilization, VRAM (used/free/total), temperature, power draw + limit,
@@ -8,10 +8,14 @@
 # bottom block is per-process compute usage from `nvidia-smi pmon`.
 #
 # Usage:
-#   ./scripts/gpu_monitor.sh
-#   INTERVAL=2 ./scripts/gpu_monitor.sh   # faster refresh
+#   # Normal speed
+#   ./scripts/ultradian_gpu_monitor.sh
 #
-# To quit: Ctrl+C.
+#   # Faster speed (every 2 secs)
+#   INTERVAL=2 ./scripts/ultradian_gpu_monitor.sh
+#
+#   # To quit:
+#   Ctrl+C.
 # ──────────────────────────────────────────────────────────────────────────────
 
 set -u

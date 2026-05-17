@@ -1,8 +1,9 @@
-# datasets-stats
+# tarel-stats
 
 Standalone descriptive report over the raw parquet datasets used by the
-TAReL pipeline. It walks
-`datasets/raw/<exchange>/<orderbooks|trades>/*.parquet` and prints, for each
+TAReL pipeline. 
+
+It walks `datasets/raw/<exchange>/<orderbooks|trades>/*.parquet` and prints, for each
 dataset kind:
 
 - total number of parquet files;
@@ -20,15 +21,11 @@ dataset kind:
 from the tarel/ folder
 
 ```bash
-cargo run --release --manifest-path codes/datasets-stats/Cargo.toml -- datasets/raw
+cargo run --release --manifest-path codes/tarel-stats/Cargo.toml -- datasets/raw
 ```
 or, from this crate
 
 ```bash
-cd codes/datasets-stats
+cd codes/tarel-stats
 cargo run --release -- ../../datasets/raw
 ```
-
-The script reads only the parquet metadata for the row counts and projects
-only the timestamp column when scanning the first / last file in each cell,
-so it stays I/O-light even on large datasets.

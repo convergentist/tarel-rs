@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # ──────────────────────────────────────────────────────────────────────────────
-# set_fan_speed.sh — set manual fan control to a fixed % on every NVIDIA GPU.
+# ultradian_fan_speed.sh — set manual fan control to a fixed % on every NVIDIA GPU.
 #
 # Usage:
-#   ./scripts/set_fan_speed.sh           # default 75%
-#   ./scripts/set_fan_speed.sh 85        # explicit 85%
+#   ./scripts/ultradian_fan_speed.sh           # default 50%
+#   ./scripts/ultradian_fan_speed.sh 80        # explicit 80%
 #
 # Notes:
 #   - The setting persists for the lifetime of the current X session.
@@ -19,7 +19,7 @@
 # ──────────────────────────────────────────────────────────────────────────────
 
 set -u
-TARGET="${1:-75}"
+TARGET="${1:-80}"
 
 # Sanity-check the target value.
 if ! [[ "$TARGET" =~ ^[0-9]+$ ]] || (( TARGET < 30 || TARGET > 100 )); then

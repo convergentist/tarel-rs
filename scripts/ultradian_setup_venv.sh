@@ -1,21 +1,24 @@
 #!/usr/bin/env bash
 # ──────────────────────────────────────────────────────────────────────────────
-# setup_ubuntu_venv.sh
+# ultradian_setup_venv.sh
 #
 # One-time setup of a pyenv-managed virtualenv for tarel-rs on the Ultradian
-# Linux box (Ubuntu x86_64, GTX 1080 Ti). Creates `ubuntu_tarel_venv` with
-# Python 3.12 and PyTorch 2.5.1 + CUDA — pinned to match `tch = "0.18"` in
-# the tarel-rs and logan-rs Cargo.toml files.
+# Linux server (Ubuntu x86_64, Dual GTX 1080 Ti). 
+# Creates `ultradian_tarel_venv` with Python 3.12 and PyTorch 2.5.1 + CUDA
+# These are necessary to match `tch = "0.18"` in both tarel-rs and logan-rs 
+# Cargo.toml files.
 #
 # Why these exact versions:
 #
 # - tarel-rs and logan-rs are pinned to tch 0.18, which targets the
 #   PyTorch 2.5.x ATen C++ surface. Later tch releases chase an unstable
 #   moving target; 2.5.1 is the stable pair.
+#
 # - GTX 1080 Ti is Pascal-architecture (compute capability 6.1). PyTorch
 #   2.5.1 still supports Pascal; CUDA 11.8 is the safest CUDA toolkit
 #   pairing (cu121/cu124 also work if your driver is new enough, but
 #   cu118 has the widest driver compatibility for older boxes).
+#
 # - Python 3.12 is in PyTorch 2.5's wheel support window (3.9–3.12).
 #
 # Usage:
@@ -28,7 +31,7 @@
 set -euo pipefail
 
 PY_VERSION="${PY_VERSION:-3.12.7}"
-VENV_NAME="${VENV_NAME:-ubuntu_tarel_venv}"
+VENV_NAME="${VENV_NAME:-ultradian_tarel_venv}"
 TORCH_VERSION="${TORCH_VERSION:-2.5.1}"
 CUDA_VARIANT="${CUDA_VARIANT:-cu118}"   # cu118 | cu121 | cu124 | cpu
 
@@ -96,7 +99,7 @@ Setup complete.
 Per-shell usage (run these before \`cargo build\` in tarel-rs or logan-rs):
 
     pyenv shell $VENV_NAME
-    source $(pwd)/scripts/ubuntu_env.sh
+    source $(pwd)/scripts/ultradian_tarel_env.sh
     cargo build --release
 
 After build, training picks the GPU automatically via

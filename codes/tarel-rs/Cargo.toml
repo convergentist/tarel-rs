@@ -20,7 +20,7 @@ path = "src/lib.rs"
 takens_rp = { path = "../../../takens-rs/takens-rp", features = ["parquet"] }
 takens_stats = { path = "../../../takens-rs/takens-stats" }
 logan-rs = { path = "../../../logan-rs" }
-tch = { version = "0.22" }
+tch = { version = "0.18" }
 
 # Orchestration plumbing.
 anyhow = { version = "1" }
@@ -36,6 +36,11 @@ tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 
 [dev-dependencies]
 tempfile = "3"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+strip = "symbols"
 
 [lints.rust]
 unsafe_code = "forbid"

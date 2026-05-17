@@ -1,8 +1,8 @@
 # ──────────────────────────────────────────────────────────────────────────────
-# mac_env.sh — source this in your shell before `cargo build` on macOS.
+# m4_tarel_env.sh — source this in your shell before `cargo build` on macOS.
 #
-#   pyenv shell mac_tarel_venv
-#   source scripts/mac_env.sh
+#   pyenv shell m4_tarel_venv
+#   source scripts/m4_tarel_env.sh
 #   cargo build --release
 #
 # Intentionally not executable: must be sourced, not run, so env vars

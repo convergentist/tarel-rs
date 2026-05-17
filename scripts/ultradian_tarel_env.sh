@@ -1,15 +1,15 @@
 # ──────────────────────────────────────────────────────────────────────────────
-# ubuntu_env.sh — source this in your shell before `cargo build` on Ubuntu
+# ultradian_tarel_env.sh — source this in your shell before `cargo build` on Ubuntu
 # x86_64 (the Ultradian Linux box).
 #
-#   pyenv shell ubuntu_tarel_venv
-#   source scripts/ubuntu_env.sh
+#   pyenv shell ultradian_tarel_venv
+#   source scripts/ultradian_tarel_env.sh
 #   cargo build --release
 #
 # Intentionally not executable: must be sourced, not run, so env vars
 # survive into the current shell.
 #
-# Differences vs scripts/mac_env.sh:
+# Differences vs scripts/m4_tarel_env.sh:
 #   - LD_LIBRARY_PATH instead of DYLD_LIBRARY_PATH (Linux dynamic linker)
 #   - No CXXFLAGS workaround (Linux uses libstdc++; libc++'s
 #     `is_arithmetic` specialization issue is macOS-only)
@@ -45,14 +45,9 @@ if [ -d /usr/local/cuda ]; then
     fi
 fi
 
-# Optional: explicitly select a GPU on multi-GPU boxes. The Ultradian
-# has a single 1080 Ti so this is a no-op, but uncomment if you ever
-# add a second card and want to pin Stage-2 training to it.
-# export CUDA_VISIBLE_DEVICES=0
-
-echo "[ubuntu_env] LIBTORCH_USE_PYTORCH=$LIBTORCH_USE_PYTORCH"
-echo "[ubuntu_env] LIBTORCH_BYPASS_VERSION_CHECK=$LIBTORCH_BYPASS_VERSION_CHECK"
-echo "[ubuntu_env] LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+echo "[ultradian_tarel_env] LIBTORCH_USE_PYTORCH=$LIBTORCH_USE_PYTORCH"
+echo "[ultradian_tarel_env] LIBTORCH_BYPASS_VERSION_CHECK=$LIBTORCH_BYPASS_VERSION_CHECK"
+echo "[ultradian_tarel_env] LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
 if [ -n "${CUDA_HOME:-}" ]; then
-    echo "[ubuntu_env] CUDA_HOME=$CUDA_HOME"
+    echo "[ultradian_tarel_env] CUDA_HOME=$CUDA_HOME"
 fi
