@@ -29,6 +29,23 @@ all of that.
 
 ## Quickstart
 
+Install pyenv 
+
+```bash
+pyenv virtualenv 3.12 m4_tarel_venv
+pyenv local m4_tarel_venv
+```
+
+Then the preparation for the environments
+
+```bash
+./scripts/ultradian_setup_venv.sh
+pyenv shell ultradian_tarel_venv
+source scripts/ultradian_tarel_env.sh
+```bash
+
+Compose with build 
+
 ```bash
 docker compose up --build
 ```
@@ -67,8 +84,8 @@ YAML edits needed.
 | `RUN_MINS`        | `10`                                                                 | stage-two    |
 | `CLOCKS`          | `event`                                                              | stage-two    |
 
-`SEED` (stage-one) is a specific per-cell seed value; `SEEDS_COUNT`
-(stage-two) is the *number* of seeds to train per cell.
+`SEED` (stage-one) is a specific per-cell seed value; 
+`SEEDS_COUNT` (stage-two) is the *number* of seeds to train per cell.
 
 To pin the sibling crates instead of tracking `main`:
 

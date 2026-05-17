@@ -90,6 +90,20 @@ ENV LIBTORCH_USE_PYTORCH=1 \
 # image / Python version, this must change in lock-step.
 ENV LD_LIBRARY_PATH=/usr/local/lib/python3.12/site-packages/torch/lib
 
+# CUDA-stub symlinks. torch-sys's build.rs emits unconditional
+# `cargo:rustc-link-lib=torch_cuda` / `c10_cuda` and `-Wl,--no-as-needed`,
+# even when LIBTORCH_USE_PYTORCH points at a CPU-only wheel that lacks
+# those .so files. Without these symlinks the final cargo link step
+# dies with `cannot find -ltorch_cuda` / `-lc10_cuda`.
+#
+# Pointing the missing CUDA libs at the CPU equivalents satisfies the
+# linker (no unresolved symbols are referenced because we never enter
+# CUDA code paths on this image — stage-two's `Device::cuda_if_available()`
+# falls back to CPU at runtime, see tarel-rs/src/stage_two.rs:88).
+RUN cd /usr/local/lib/python3.12/site-packages/torch/lib \
+ && ln -sf libtorch_cpu.so libtorch_cuda.so \
+ && ln -sf libc10.so       libc10_cuda.so
+
 # ── Sibling crates (git clone) ───────────────────────────────────────────────
 # tarel-rs's Cargo.toml uses `path = "../../../takens-rs/takens-rp"` etc.
 # Relative to /work/tarel/codes/tarel-rs, three levels up is /work, so
