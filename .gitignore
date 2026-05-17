@@ -5,6 +5,7 @@ codes/tarel-rs/runs_*
 codes/tarel-rs/runs/*
 tarel-neurips/stage*
 Cargo.lock
+datasets/consolidated/*
 
 .python-version
 .DS_Store
