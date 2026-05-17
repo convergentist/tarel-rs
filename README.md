@@ -21,6 +21,28 @@ Latent Spaces are ...
 - Models: w-GAN-gp
 - Metrics: 
 
+## Stage-One (Dataset Formation)
+
+Logs from the experiment are in this folder `/artifacts/runs/00000000c001d00d/`,
+the stage_one subfolder is about data preparation and analysis of recurrence
+plots metrics. 
+
+- Exchanges: Coinbase and Kraken
+- Clocks: event, info_time, physical
+
+Within the `buckets` folder, there is data about the effects of clock selection for 
+the particular cell. In the `recurrence` sub-folder, the RQA metrics and 
+other stats and analysis for the recurrence plots that were generated from each
+of the enties or files within the buckets.
+
+## Stage-Two (Model Training)
+
+Logs from the model training exists in `stage_two` sub-folder, both for
+the model training and testing.
+
+- StabilityScoreSpec.json has
+- Models are store here:  $CELL/$EXP/$CLOCK/checkpoints/step_/critic.pt and generator.pt
+
 # \[#\] Cite
 
 ```bibtex

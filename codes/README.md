@@ -76,7 +76,7 @@ Run the following command (with the tarel binary compiled). Produce artifacts
 CELL=coinbase:BTC-USDC
 INPUT_PARQUET=./datasets/consolidated/coinbase/BTC-USDC.parquet
 RUNS=./artifacts/runs
-EXP=0xC001DAAA
+EXP=0xC001DFFF
 SEED=4
 
 cargo run --release \
@@ -115,8 +115,8 @@ Trainin with the data .msgpack already generated from stage-one
 
 ```bash
 EXP=0xC001DAAA
-CELL=kraken:BTC-USDC
-SEED=5
+CELL=coinbase:BTC-USDC
+SEED=3
 RUN_MINS=25
 RUNS=./artifacts/runs
 CLOCKS=event
