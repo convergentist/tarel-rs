@@ -1,0 +1,133 @@
+# tarel — Docker demo
+
+Stand-alone container demo of the TAReL Stage-1 → Stage-2 pipeline.
+One command builds everything and produces a populated `./artifacts/runs/`
+directory on the host.
+
+## Prerequisites
+
+- Docker Desktop 4.25+ (or Docker Engine 24+ with Compose plugin v2.20+).
+  BuildKit must be enabled (default in any modern install).
+- Apple Silicon (M-series) host. The Dockerfiles pin `linux/arm64`. On
+  x86_64 the build will fall back to QEMU emulation — works but slow.
+- Outbound network for the build: pulls Debian, Python, Rust, PyTorch,
+  and `git clone`s the sibling crates `takens-rs` / `logan-rs`.
+- ≥ 15 GB free disk for build cache + image layers.
+
+No host-side Python, Rust, or pyenv setup is required. The ultradian /
+m4 venv scripts in `scripts/` are for native dev only — Docker skips
+all of that.
+
+## Files
+
+| File                          | Role                                                                 |
+| ----------------------------- | -------------------------------------------------------------------- |
+| `docker-compose.yml`          | Orchestrates the two services and their bind mounts.                 |
+| `m4-stage-one.Dockerfile`     | Heavy image: toolchain, torch, cargo build, stage-1 entrypoint.      |
+| `m4-stage-two.Dockerfile`     | Thin image: `FROM` stage-one's image, stage-2 entrypoint.            |
+| `.dockerignore`               | Keeps `target/`, `artifacts/`, `datasets/`, `.git/` out of context.  |
+
+## Quickstart
+
+```bash
+docker compose up --build
+```
+
+Cold first run: ~10–20 min for stage-one build (cargo is the long pole),
+seconds for stage-two build, then stage-one runs, then stage-two runs.
+On rebuild the cargo layer is cached.
+
+Run a single stage:
+
+```bash
+docker compose run --rm stage-one
+docker compose run --rm stage-two   # requires ./artifacts/runs populated
+```
+
+Tear down volumes / cached images:
+
+```bash
+docker compose down
+docker image rm tarel-rs:m4-stage-one tarel-rs:m4-stage-two
+```
+
+## Configuration
+
+Drop a `.env` next to `docker-compose.yml` to override any defaults — no
+YAML edits needed.
+
+| Variable          | Default                                                              | Used by      |
+| ----------------- | -------------------------------------------------------------------- | ------------ |
+| `CELL`            | `kraken:BTC-USDC`                                                    | both         |
+| `INPUT_PARQUET`   | `/work/tarel/datasets/consolidated/kraken/BTC-USDC.parquet`          | stage-one    |
+| `EXP_STAGE_ONE`   | `0xC001DFFF`                                                         | stage-one    |
+| `SEED`            | `4`                                                                  | stage-one    |
+| `EXP_STAGE_TWO`   | `0xC001DAAA`                                                         | stage-two    |
+| `SEEDS_COUNT`     | `3`                                                                  | stage-two    |
+| `RUN_MINS`        | `10`                                                                 | stage-two    |
+| `CLOCKS`          | `event`                                                              | stage-two    |
+
+`SEED` (stage-one) is a specific per-cell seed value; `SEEDS_COUNT`
+(stage-two) is the *number* of seeds to train per cell.
+
+To pin the sibling crates instead of tracking `main`:
+
+```bash
+docker compose build --build-arg TAKENS_REF=v0.3.0 \
+                     --build-arg LOGAN_REF=v0.2.1  stage-one
+```
+
+`--build-arg` accepts branches and tags. For commit SHAs, see the
+comment block in `m4-stage-one.Dockerfile` around the `git clone` step.
+
+## Inputs and outputs
+
+Both services share two bind mounts:
+
+- `./datasets` → `/work/tarel/datasets`  (read-only)
+- `./artifacts/runs` → `/work/tarel/artifacts/runs`  (read-write)
+
+Stage-one reads the parquet from `./datasets/consolidated/<exch>/<sym>.parquet`
+and writes a run directory tree (manifest, buckets, DPs, RPs at RR=5%
+and RR=1%, 64×64 W-GAN tensors, PNG sanity grids) into `./artifacts/runs`.
+Stage-two consumes that run directory and writes training artifacts
+alongside it. Everything persists on the host after the containers exit.
+
+## How the stages connect
+
+`stage-two`'s `build.additional_contexts.stage_one_image: service:stage-one`
+binds the named build context `stage_one_image` to the image Compose
+just built for `stage-one`. The stage-two Dockerfile's `FROM stage_one_image`
+then layers the new entrypoint on top — no second cargo build.
+
+`depends_on.stage-one.condition: service_completed_successfully` makes
+`stage-two` wait for `stage-one` to exit 0 before starting. A non-zero
+stage-one exit aborts the run.
+
+## Troubleshooting
+
+**Build fails at `git clone takens-rs` / `logan-rs`.**
+The default ref is `main`. If those branches break against the current
+`tarel-rs` HEAD, pin with `--build-arg TAKENS_REF=<tag>` /
+`LOGAN_REF=<tag>`.
+
+**Build fails at `cargo build --release` with a libtorch / `tch` error.**
+The `tch 0.18` ↔ `PyTorch 2.5.1` pair is the design pin. If a PyTorch
+patch release ever drifts the ABI, the Dockerfile already sets
+`LIBTORCH_BYPASS_VERSION_CHECK=1`. If linkage still fails, freeze the
+torch version in the `pip install` line.
+
+**Stage-two aborts with “runs dir is missing or empty”.**
+Stage-one didn't write anything to `./artifacts/runs`. Inspect
+`docker compose logs stage-one` for the actual failure.
+
+**“no matching manifest for linux/amd64” on x86_64.**
+You're not on Apple Silicon. Either enable QEMU
+(`docker run --privileged --rm tonistiigi/binfmt --install all`) or
+remove the `platform: linux/arm64` / `platforms: [linux/arm64]` lines
+to build natively for your host — note that the CPU PyTorch wheel URL
+will then need to change to a non-arm64 index.
+
+**Build context is huge / slow `Sending build context to Docker daemon`.**
+Verify `.dockerignore` is present at the repo root and that `artifacts/`,
+`datasets/`, and `**/target` are listed.

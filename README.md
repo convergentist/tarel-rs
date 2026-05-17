@@ -21,6 +21,23 @@ Latent Spaces are ...
 - Models: w-GAN-gp
 - Metrics: 
 
+# \[#\] Run
+
+## macOS
+
+Create a virtualenv with pyenv and run the setup script
+
+```bash
+
+./scripts/ultradian_setup_venv.sh
+```
+
+```bash
+pyenv shell m4_tarel_venv
+source scripts/m4_tarel_env.sh
+```
+
+
 ## Stage-One (Dataset Formation)
 
 Logs from the experiment are in this folder `/artifacts/runs/00000000c001d00d/`,

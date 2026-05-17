@@ -1,0 +1,105 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# docker-compose.yml — TAReL stand-alone Stage-1 → Stage-2 demo.
+#
+# What this orchestrates:
+#   stage-one  builds the m4-stage-one image (debian-slim + python:3.12 +
+#              rust 1.85 + torch 2.5.1 CPU + cargo build --release), then
+#              runs `tarel run-stage-one --produce-dp-rp` against the
+#              kraken:BTC-USDC parquet that ships in datasets/consolidated/.
+#              Outputs land in ./artifacts/runs (bind-mounted from host).
+#
+#   stage-two  builds the m4-stage-two image on top of stage-one's image
+#              (via `additional_contexts.stage_one_image: service:stage-one`),
+#              waits for stage-one to exit 0, then runs
+#              `tarel run-stage-two` over the run directory stage-one wrote.
+#
+# Run the demo:
+#   docker compose up --build
+#     - builds stage-one (~10-20 min cold, mostly cargo build)
+#     - builds stage-two (seconds; only adds a 1-line entrypoint layer)
+#     - runs stage-one to completion
+#     - runs stage-two to completion
+#     - both containers exit; the run directory remains in ./artifacts/runs
+#
+# Run just one stage:
+#   docker compose run --rm stage-one
+#   docker compose run --rm stage-two   # assumes ./artifacts/runs is populated
+#
+# Override defaults without editing this file:
+#   Create a .env file next to this docker-compose.yml, e.g.
+#       CELL=kraken:BTC-USDC
+#       SEED=4
+#       EXP_STAGE_ONE=0xC001DFFF
+#       EXP_STAGE_TWO=0xC001DAAA
+#       RUN_MINS=10
+#       CLOCKS=event
+#       SEEDS_COUNT=3
+#   docker-compose picks them up via the ${VAR:-default} syntax below.
+#
+# Platform note:
+#   Pinned to linux/arm64 (Apple Silicon). On x86_64 hosts you'll need
+#   QEMU emulation (slow) or a separate CUDA-capable compose file.
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Compose Specification — no top-level `version:` key needed.
+
+services:
+
+  stage-one:
+    image: tarel-rs:m4-stage-one
+    build:
+      context: .
+      dockerfile: m4-stage-one.Dockerfile
+      platforms:
+        - linux/arm64
+    platform: linux/arm64
+    environment:
+      # Stage-1 inputs (defaults match the kraken parquet that ships in
+      # datasets/consolidated/). Override via .env or `-e VAR=...`.
+      CELL: ${CELL:-kraken:BTC-USDC}
+      INPUT_PARQUET: ${INPUT_PARQUET:-/work/tarel/datasets/consolidated/kraken/BTC-USDC.parquet}
+      RUNS: /work/tarel/artifacts/runs
+      EXP: ${EXP_STAGE_ONE:-0xC001DFFF}
+      SEED: ${SEED:-4}
+    volumes:
+      # Read-only mount of the on-disk parquet store. The container only
+      # needs to read; preventing writes catches accidental dataset
+      # corruption from inside the image.
+      - ./datasets:/work/tarel/datasets:ro
+      # Shared run output directory. stage-one writes here; stage-two reads
+      # + writes here. Survives the container lifecycle so you can inspect
+      # buckets / DPs / RPs / PNG grids on the host after the demo.
+      - ./artifacts/runs:/work/tarel/artifacts/runs
+
+  stage-two:
+    image: tarel-rs:m4-stage-two
+    build:
+      context: .
+      dockerfile: m4-stage-two.Dockerfile
+      platforms:
+        - linux/arm64
+      # `stage_one_image` is the named build context the stage-two
+      # Dockerfile references via `FROM stage_one_image`. Pointing it at
+      # `service:stage-one` makes compose build stage-one first and reuse
+      # that image, so we don't rebuild cargo/torch twice.
+      additional_contexts:
+        stage_one_image: service:stage-one
+    platform: linux/arm64
+    depends_on:
+      stage-one:
+        # Block stage-two until stage-one exits 0. If stage-one fails,
+        # stage-two never starts (which is what we want — stage-two needs
+        # the run directory stage-one produces).
+        condition: service_completed_successfully
+    environment:
+      CELL: ${CELL:-kraken:BTC-USDC}
+      # Number of seeds to train (pilot=3, production=20).
+      SEED: ${SEEDS_COUNT:-3}
+      # Wallclock budget per (cell, seed) in minutes.
+      RUN_MINS: ${RUN_MINS:-10}
+      RUNS: /work/tarel/artifacts/runs
+      EXP: ${EXP_STAGE_TWO:-0xC001DAAA}
+      CLOCKS: ${CLOCKS:-event}
+    volumes:
+      - ./datasets:/work/tarel/datasets:ro
+      - ./artifacts/runs:/work/tarel/artifacts/runs

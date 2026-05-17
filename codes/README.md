@@ -111,7 +111,9 @@ SEED=4
 ## Stage-Two: Model Training
 ---
 
-Trainin with the data .msgpack already generated from stage-one
+Trainin with the data .msgpack already generated from stage-one. 
+
+For a machine with Nvidia GPU: 
 
 ```bash
 EXP=0xC001DAAA
@@ -123,6 +125,25 @@ CLOCKS=event
 CUDA_DEVICE=0
 
 CUDA_VISIBLE_DEVICES=$CUDA_DEVICE ./codes/tarel-rs/target/release/tarel run-stage-two \
+    --cells "$CELL" \
+    --seeds "$SEED" \
+    --budget-mins "$RUN_MINS" \
+    --runs "$RUNS" \
+    --experiment-seed "$EXP" \
+    --clocks "$CLOCKS"
+```
+
+Apple silicon (CPU Only)
+
+```bash
+EXP=0xC001DAAA
+CELL=coinbase:BTC-USDC
+SEED=3
+RUN_MINS=25
+RUNS=./artifacts/runs
+CLOCKS=event
+
+./codes/tarel-rs/target/release/tarel run-stage-two \
     --cells "$CELL" \
     --seeds "$SEED" \
     --budget-mins "$RUN_MINS" \

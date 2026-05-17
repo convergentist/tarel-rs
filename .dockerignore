@@ -1,0 +1,42 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# .dockerignore — keep the build context lean for m4-stage-one.Dockerfile.
+#
+# Without this, `COPY . /work/tarel` would haul ~GB of git history, cargo
+# target dirs, prior run outputs, and large raw datasets into the image
+# (slow build + bloated image + cache invalidation on every artifact).
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Build outputs (rebuilt inside the image)
+**/target
+**/__pycache__
+**/*.pyc
+**/.venv
+**/.mypy_cache
+**/.pytest_cache
+**/.ruff_cache
+
+# Run outputs (mounted at runtime, not needed at build time)
+artifacts
+
+# Raw datasets — only the consolidated parquet is needed at runtime, and
+# even that is bind-mounted (not COPY'd into the image). Strip everything
+# under datasets/ from the build context to keep it small.
+datasets
+
+# Editor / OS noise
+.DS_Store
+.idea
+.vscode
+*.swp
+
+# Docker meta (don't recurse into compose's own files)
+docker-compose.yml
+docker-compose.override.yml
+*.Dockerfile
+Dockerfile
+.dockerignore
