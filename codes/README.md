@@ -64,83 +64,115 @@ at `target/release/tarel-rs`
 ## Stage-One: Generate Recurrence Plots
 ---
 
-Run the following command (with the tarel binary compiled).
-
-```bash
-EXP=0xC001DAAA
-RUNS=./runs/stage_one
-
-tarel run-stage-one \
-  --cell binance:BTC-USDC \
-  --input  /path/to/BTC-USDC.parquet \
-  --runs   $RUNS \
-  --experiment-seed $EXP \
-  --seed 0 \
-  --produce-dp-rp full
-```
-
 It executes the code in `tarel-rs/src/stage_one.rs`, for the case of processing
 orderbooks of the BTC-USDC symbol in the BInance exchange, taking the data from
 the file named `binance_BTC-USDT_ob_sync_YYYYMMDD.parquet`, store results in `/runs` 
 folder and will produce the respective Distance-Plots based Recurrence-Plots.
 In the same file there are more details about this process.
 
-### Stage-Two: Model Training
-
-cd /Users/franciscome/git/research/logan-rs
-cargo run --release -- train \
-  --data    ./runs/<exp>/datasets/dp_tensors \
-  --out-dir ./checkpoints/<exp> \
-  --seed 0 --budget-mins 20
-
-### Stage-Three
-
-while in `codes/tarel-rs` ... 
+Run the following command (with the tarel binary compiled). Produce artifacts
 
 ```bash
-cargo run run-stage-one --cell binance:BTC-USDC \
-    --input ../../datasets/raw/binance/orderbooks/binance_BTC-USDC_ob_sync_20260507_041711.731.parquet
+CELL=coinbase:BTC-USDC
+INPUT_PARQUET=./datasets/consolidated/coinbase/BTC-USDC.parquet
+RUNS=./artifacts/runs
+EXP=0xC001DAAA
+SEED=4
+
+cargo run --release \
+    --manifest-path .codes/tarel-rs/Cargo.toml \
+    -- run-stage-one \
+    --cell $CELL \
+    --input $INPUT_PARQUET \
+    --runs $RUNS \
+    --experiment-seed $EXP \
+    --seed $SEED \
+    --produce-dp-rp
 ```
 
-### Train
+Full generation of the metrics.
 
 ```bash
-cargo run --release -- train \
-    --data datasets/rp/train \
-    --output generator.pt \
-    --epochs 200 \
-    --batch-size 10 \
-    --latent-dim 128 \
-    --img-size 64
+CELL=kraken:BTC-USDC
+INPUT_PARQUET=./datasets/consolidated/kraken/BTC-USDC.parquet
+RUNS=./artifacts/runs
+EXP=0xC001DAAA
+SEED=4
+
+./codes/tarel-rs/target/release/tarel run-stage-one \
+    --cell "$CELL" \
+    --input "$INPUT_PARQUET" \
+    --runs "$RUNS" \
+    --experiment-seed "$EXP" \
+    --seed "$SEED" \
+    --full
 ```
 
-### Trace + generate
+## Stage-Two: Model Training
+---
+
+Trainin with the data .msgpack already generated from stage-one
+
+```bash
+EXP=0xC001DAAA
+CELL=kraken:BTC-USDC
+SEED=5
+RUN_MINS=25
+RUNS=./artifacts/runs
+CLOCKS=event
+CUDA_DEVICE=0
+
+CUDA_VISIBLE_DEVICES=$CUDA_DEVICE ./codes/tarel-rs/target/release/tarel run-stage-two \
+    --cells "$CELL" \
+    --seeds "$SEED" \
+    --budget-mins "$RUN_MINS" \
+    --runs "$RUNS" \
+    --experiment-seed "$EXP" \
+    --clocks "$CLOCKS"
+```
+
+## Stage-Three: Metrics
+---
+
+### Compute of metrics.
 
 ```bash
 python3 trace.py
+```
+
+### Generate model weights file
+
+```bash
 cargo run --release -- generate \
     --model generator_traced.pt \
     --n 16 \
     --output samples/
 ```
 
+## Complementary
 
-## Consolidate .parquet files
+Consolidate .parquet files. Build the new binary.
 
-# (1) Build the new binary.
+```bash
 cd /Users/franciscome/git/research/takens-rs
 cargo build --release -p takens_rs --bin takens_consolidate
+```
 
-# (2) Run on one exchange to spot-check.
+Run on one exchange to spot-check.
+
+```bash
 ./target/release/takens_consolidate \
     --input-dir  datasets/raw/kraken/orderbooks \
     --output     datasets/consolidated/kraken/BTC-USDC.parquet
+```
 
-# Expect: one JSON line on stdout, exit 0, file appears at the output path,
-# no .tmp left behind. kraken is the smallest cell (~53 MB, 5M rows) so this
-# is the fastest validation.
+Expect: one JSON line on stdout, exit 0, file appears at the output path,
+no .tmp left behind. kraken is the smallest cell (~53 MB, 5M rows) so this
+is the fastest validation.
 
-# (3) Full sweep.
+Now the  Full sweep
+
+```bash
 ./scripts/consolidate_all.sh
-
+```
 
