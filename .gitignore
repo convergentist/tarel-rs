@@ -1,4 +1,6 @@
 
+runs/
+
 codes/tarel-rs/runs_*
 codes/tarel-rs/runs/*
 tarel-neurips/stage*
