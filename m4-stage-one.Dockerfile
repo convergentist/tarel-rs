@@ -88,7 +88,18 @@ ENV LIBTORCH_USE_PYTORCH=1 \
 # The path is deterministic for python:3.12-slim-bookworm + a pip install
 # into the system Python, so we hard-code it. If we ever switch base
 # image / Python version, this must change in lock-step.
-ENV LD_LIBRARY_PATH=/usr/local/lib/python3.12/site-packages/torch/lib
+#
+# `torch.libs/` (sibling of torch/, an auditwheel quirk on manylinux ARM64
+# CPU wheels) holds vendored OpenBLAS + libgfortran that libtorch_cpu.so
+# has a transitive DT_NEEDED on. Both link-time and run-time loaders must
+# see it.
+ENV LD_LIBRARY_PATH=/usr/local/lib/python3.12/site-packages/torch/lib:/usr/local/lib/python3.12/site-packages/torch.libs
+
+# Build-time linker: rustc passes our -L through to cc, but the dynamic
+# linker's rpath-link check for transitive DT_NEEDED entries (libopenblasp
+# -> libgfortran) needs torch.libs/ explicitly. Adding -L alone is not
+# sufficient; -rpath-link is the right knob.
+ENV RUSTFLAGS="-C link-arg=-Wl,-rpath-link=/usr/local/lib/python3.12/site-packages/torch.libs"
 
 # CUDA-stub symlinks. torch-sys's build.rs emits unconditional
 # `cargo:rustc-link-lib=torch_cuda` / `c10_cuda` and `-Wl,--no-as-needed`,
