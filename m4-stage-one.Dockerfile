@@ -150,14 +150,12 @@ RUN cargo build --release
 ENV PATH=/work/tarel/codes/tarel-rs/target/release:$PATH
 
 # ── Entrypoint ───────────────────────────────────────────────────────────────
-# All inputs are configurable via env vars. Defaults match the available
-# dataset (kraken:BTC-USDC) so `docker compose run stage-one` works
-# out-of-the-box with the parquet that ships in datasets/consolidated/.
-ENV CELL=kraken:BTC-USDC \
-    INPUT_PARQUET=/work/tarel/datasets/consolidated/kraken/BTC-USDC.parquet \
-    RUNS=/work/tarel/artifacts/runs \
-    EXP=0xC001DFFF \
-    SEED=4
+# Runtime env vars (CELL, INPUT_PARQUET, RUNS, EXP, SEED) are supplied by
+# docker-compose.yml's `environment:` block (with `.env` overrides via the
+# `${VAR:-default}` pattern). The Dockerfile intentionally does NOT bake
+# defaults for them, so docker-compose.yml stays the single source of truth
+# for runtime configuration. If you run this image directly without compose,
+# pass them with `-e VAR=...` on the `docker run` command line.
 
 WORKDIR /work/tarel
 COPY <<'EOF' /usr/local/bin/run-stage-one.sh
@@ -177,6 +175,7 @@ exec tarel run-stage-one \
     --experiment-seed "${EXP}" \
     --seed "${SEED}" \
     --produce-dp-rp
+    --full
 EOF
 RUN chmod +x /usr/local/bin/run-stage-one.sh
 

@@ -28,12 +28,11 @@
 # Override defaults without editing this file:
 #   Create a .env file next to this docker-compose.yml, e.g.
 #       CELL=kraken:BTC-USDC
-#       SEED=4
-#       EXP_STAGE_ONE=0xC001DFFF
-#       EXP_STAGE_TWO=0xC001DAAA
+#       SEED=2
+#       EXP=0xA0000001          # shared by stage-one and stage-two (same run id)
 #       RUN_MINS=10
 #       CLOCKS=event
-#       SEEDS_COUNT=3
+#       SEEDS_COUNT=2
 #   docker-compose picks them up via the ${VAR:-default} syntax below.
 #
 # Platform note:
@@ -59,7 +58,7 @@ services:
       CELL: ${CELL:-kraken:BTC-USDC}
       INPUT_PARQUET: ${INPUT_PARQUET:-/work/tarel/datasets/consolidated/kraken/BTC-USDC.parquet}
       RUNS: /work/tarel/artifacts/runs
-      EXP: ${EXP_STAGE_ONE:-0xC001DFFF}
+      EXP: ${EXP:-0xA0000001}
       SEED: ${SEED:-4}
     volumes:
       # Read-only mount of the on-disk parquet store. The container only
@@ -94,12 +93,12 @@ services:
     environment:
       CELL: ${CELL:-kraken:BTC-USDC}
       # Number of seeds to train (pilot=3, production=20).
-      SEED: ${SEEDS_COUNT:-3}
+      SEED: ${SEEDS_COUNT:-2}
       # Wallclock budget per (cell, seed) in minutes.
       RUN_MINS: ${RUN_MINS:-10}
       RUNS: /work/tarel/artifacts/runs
-      EXP: ${EXP_STAGE_TWO:-0xC001DAAA}
-      CLOCKS: ${CLOCKS:-event}
+      EXP: ${EXP:-0xA0000001}
+      CLOCKS: ${CLOCKS:-event,physical,info_time}
     volumes:
       - ./datasets:/work/tarel/datasets:ro
       - ./artifacts/runs:/work/tarel/artifacts/runs

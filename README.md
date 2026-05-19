@@ -28,7 +28,6 @@ Latent Spaces are ...
 Create a virtualenv with pyenv and run the setup script
 
 ```bash
-
 ./scripts/ultradian_setup_venv.sh
 ```
 

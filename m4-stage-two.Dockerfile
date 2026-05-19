@@ -36,20 +36,18 @@
 FROM stage_one_image
 
 # ── Entrypoint ───────────────────────────────────────────────────────────────
-# Defaults match the user-supplied stage-two example. Override any of these
-# via the `environment:` block in docker-compose.yml or a `.env` file.
+# Runtime env vars (CELL, SEED, RUN_MINS, RUNS, EXP, CLOCKS) are supplied by
+# docker-compose.yml's `environment:` block (with `.env` overrides via the
+# `${VAR:-default}` pattern). The Dockerfile intentionally does NOT bake
+# defaults for them, so docker-compose.yml stays the single source of truth
+# for runtime configuration. If you run this image directly without compose,
+# pass them with `-e VAR=...` on the `docker run` command line.
 #
 # Notes on flag semantics (from `tarel run-stage-two --help`):
 #   --cells        comma-separated <exchange>:<symbol> identifiers
 #   --seeds        NUMBER of seeds (not a specific seed value); pilot=3, prod=20
 #   --budget-mins  wallclock budget per (cell, seed) in minutes
 #   --clocks       comma-separated subset of {physical,event,info_time}
-ENV CELL=kraken:BTC-USDC \
-    SEED=3 \
-    RUN_MINS=10 \
-    RUNS=/work/tarel/artifacts/runs \
-    EXP=0xC001DAAA \
-    CLOCKS=event
 
 WORKDIR /work/tarel
 COPY <<'EOF' /usr/local/bin/run-stage-two.sh
