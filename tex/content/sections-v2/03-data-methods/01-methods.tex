@@ -1,0 +1,114 @@
+\section{Methods}
+\label{sec:methods}
+
+For each $(\text{instrument}, \text{seed}, \text{clock})$ triple a
+fresh W-GAN-GP is trained on the normalized $64 \times 64$
+recurrence-plot tensors of that (instrument, clock) for a fixed
+wallclock budget (default $T_{\text{budget}} = 20$ minutes per cell,
+overridable via \texttt{--budget-mins}). The generator is a
+five-stage transposed-convolution stack with BatchNorm and ReLU
+activations terminating in a $\tanh$ to bound output to $[-1, 1]$,
+mapping $z \in \mathbb{R}^{128}$ to a $1 \times 64 \times 64$ image.
+The critic is a five-stage stride-2 convolution stack with
+LeakyReLU(0.2) terminating in a scalar; no BatchNorm in the critic,
+since cross-sample correlations interfere with the per-sample
+gradient penalty. Locked hyperparameters are Adam ($\beta_1 = 0$,
+$\beta_2 = 0.9$), learning rate $10^{-4}$, $\lambda_{\mathrm{GP}} =
+10$, batch size $64$, $n_{\text{critic}} = 5$.
+
+The data loader samples training tensors uniformly with replacement
+from the per-(cell, clock) recurrence-plot bank persisted by Stage~1;
+no train/validation split is taken and every admitted bucket is
+eligible for every batch. Checkpoints are written every $1{,}000$
+generator steps; the locked specification dictates that the
+mode-coverage and critic-loss-curvature axes of the Stability Score
+are sampled only at checkpoint boundaries, so the first axis values
+become available at the first checkpoint and stabilise as the
+training horizon extends. The present run reaches the first
+checkpoint at step $1{,}000$ for the trained pairs, populating the
+EM-gap and GP-magnitude axes for the entire trajectory but leaving
+the other two axes empty by construction.
+
+\subsection*{Generator}
+\begin{center}
+\scalebox{0.75}{\input{content/figures/generator/generator-architecture}}
+\end{center}
+
+The generator is a five-stage transposed-convolution stack. Stage~1
+lifts the latent vector into a high-channel $4 \times 4$ spatial grid
+via a kernel-4, stride-1 transposed convolution with zero padding;
+Stages~2--4 each double the spatial resolution and halve the channel
+count via kernel-4, stride-2, padding-1 transposed convolutions
+(canonical DCGAN upsampling); Stage~5 collapses the 64-channel
+feature map to one channel and replaces $\mathrm{BN} \circ
+\mathrm{ReLU}$ with $\tanh$, bounding the per-pixel output to
+$(-1, 1)$. The $\tanh$ choice is consistent with the per-bucket
+min--max normalisation applied to the training tensors, which scales
+every training recurrence plot to $[-1, 1]$ via an invertible
+$(\min, \max)$-tuple. Because the generator's output is bounded by the
+same interval as the training data, the per-pixel histograms of
+$G_\theta(z)$ and a training tensor live on the same support, which
+is a precondition for the Wasserstein-1 distance estimator to be
+well-defined under the W-GAN-GP duality.
+
+Roughly $3.8$~M learnable parameters in total; Stage~2 dominates the
+budget because both its input and output channel counts are large;
+stage~5 is essentially free. This concentration of capacity in the
+middle layers is intentional: the early-middle stages of a
+transposed-convolutional generator are where the bulk of
+distributional structure is committed, while the late stages mainly
+perform geometric refinement.
+
+\subsection*{Critic}
+\begin{center}
+\scalebox{0.75}{\input{content/figures/critic/critic-architecture}}
+\end{center}
+
+The critic $D_\phi$ is the topological dual of the generator: it
+consumes a $1 \times 64 \times 64$ image (either a real training
+tensor or a fake $G_\theta(z)$) and emits a single real-valued score
+whose difference of expectations over $P_r$ and $P_g$ approximates the
+Wasserstein-1 distance $W_1(P_r, P_g)$. The architecture mirrors the
+generator's doubling pattern: spatial resolution is \emph{halved} at
+every stage. The terminal stage uses a kernel-4, stride-1 convolution
+with no activation, producing the scalar Wasserstein score. The
+gradient-penalty objective regularises $\|\nabla_{\hat{x}}
+D_\phi(\hat{x})\|_2 \to 1$ at random interpolants
+$\hat{x} = \alpha x_{\text{real}} + (1-\alpha) G_\theta(z)$, enforcing
+the Lipschitz constraint that licenses the dual estimator.
+
+\subsection*{Diagnostics}
+At each critic step we record (i) the EM-gap
+$\mathbb{E}_{\text{real}}[D_\phi] -
+\mathbb{E}_{\text{fake}}[D_\phi]$, with a 100-step rolling smooth and
+the final-100-step mean and standard deviation; (ii) the
+gradient-penalty magnitude $(\|\nabla_{\hat{x}} D_\phi(\hat{x})\|_2 -
+1)^2$ per critic step. At each $5{,}000$-generator-step checkpoint we
+additionally record (iii) the mode-coverage count, computed by drawing
+$10{,}000$ samples from $G_\theta$ and counting those whose nearest
+training-set $L_2$ neighbour distance is at most the median
+per-instrument training-pairwise $L_2$; and (iv) a critic-loss
+curvature estimate from a three-point finite difference of the
+generator loss along the last gradient direction. The four scalars
+form the four axes of the locked Stability Score
+(\texttt{StabilityScoreSpec\_v0\_1\_0.json}) under
+rank-normalisation across the seed population.
+
+\subsection*{Hardware and runtime}
+Training was performed on a single NVIDIA GeForce GTX 1080~Ti
+(Pascal, \texttt{sm\_61}, $11$ GiB VRAM) under Ubuntu with NVIDIA
+driver $580.142$ and CUDA $12.4$. Because Pascal-class GPUs were
+dropped from the default \texttt{PyTorch} CUDA wheel binaries
+beginning with \texttt{PyTorch}~2.6, the runs reported here use a
+pinned \texttt{PyTorch}~2.5.1 build with \texttt{sm\_61} support and
+\texttt{tch-rs} bindings for the Stage-2 trainer. The cuDNN benchmark
+flag is disabled at process start as part of the determinism contract,
+forcing deterministic convolution-algorithm selection at the cost of
+some throughput. The mode-coverage nearest-neighbour search is tiled
+to keep peak VRAM under $2$ GiB ($1{,}000$ rows per tile); other
+allocations during training fit comfortably within the $11$ GiB budget
+at the locked batch size of $64$ and the $64{\times}64$ tensor shape.
+Per-(cell, clock) wallclock at the first checkpoint
+(Table~\ref{tab:stage_two_summary}) is approximately $370$ seconds,
+i.e.\ roughly $2.7$ critic steps per second and $0.54$ generator
+steps per second on the present hardware.

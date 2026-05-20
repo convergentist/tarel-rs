@@ -1,0 +1,15 @@
+[0] Config.pm:328> INFO - This is Biber 2.21
+[0] Config.pm:331> INFO - Logfile is 'artifacts/article-2/article-2.blg'
+[22] biber-darwin:342> INFO - === mar. may 19, 2026, 10:18:55
+[29] Biber.pm:421> INFO - Reading 'artifacts/article-2/article-2.bcf'
+[53] Biber.pm:1002> INFO - Found 14 citekeys in bib section 0
+[58] Biber.pm:4487> INFO - Processing section 0
+[62] Biber.pm:4678> INFO - Looking for bibtex file 'bibliography/refs.bib' for section 0
+[62] bibtex.pm:1713> INFO - LaTeX decoding ...
+[66] bibtex.pm:1519> INFO - Found BibTeX data source 'bibliography/refs.bib'
+[106] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[106] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[106] Biber.pm:4307> INFO - Sorting list 'none/global//global/global/global' of type 'entry' with template 'none' and locale 'en-US'
+[106] Biber.pm:4313> INFO - No sort tailoring available for locale 'en-US'
+[109] bbl.pm:676> INFO - Writing 'artifacts/article-2/article-2.bbl' with encoding 'UTF-8'
+[111] bbl.pm:779> INFO - Output to artifacts/article-2/article-2.bbl

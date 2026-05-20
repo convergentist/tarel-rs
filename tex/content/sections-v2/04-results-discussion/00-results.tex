@@ -1,0 +1,175 @@
+\section{Results}
+\label{sec:results}
+
+We report on run \texttt{00000000c002daaaX} (experiment seed
+$3{,}221{,}412{,}522$, \texttt{tarel} v0.0.10). Two cells are
+analysed: $\texttt{binance:BTC-USDC}$ and $\texttt{kraken:BTC-USDC}$.
+The third cell ingested under this run, $\texttt{coinbase:BTC-USDC}$,
+is excluded for the reason given in Section~\ref{sec:data}.
+
+\subsection*{Stage~1: bucket construction yield}
+Table~\ref{tab:stage_one_yield} reports the per-(cell, clock) bucket
+construction yield. $N_{\text{buckets}}$ is the count of windows the
+bucketer enumerated, $N_{\text{dropped}}$ the count rejected by the
+8-snapshot floor, $N_{\text{trunc}}$ the count that crossed a
+60-minute parquet boundary and were truncated, and
+$N_{\text{rec}}$ the count that reached the recurrence-plot writer
+and produced an on-disk record. The yield column is
+$N_{\text{rec}} / N_{\text{buckets}}$ as a percentage.
+
+\input{content/sections-v2/04-results-discussion/tables/yield}
+
+Two patterns are visible. First, the physical and event clocks behave
+similarly across the two cells: yields are $\geq 99.9\%$ for binance
+under both clocks and $\geq 85.8\%$ for kraken, with the writer
+exercising thousands of buckets per (cell, clock) and the
+minimum-snapshot floor pruning a single-digit fraction at most.
+Second, the info\_time clock compresses the bucket population by one
+to two orders of magnitude relative to the other two clocks: binance
+has 50 info\_time buckets against 9{,}197 event buckets (a $184\times$
+contraction); kraken's contraction is more moderate ($\sim 1.2\times$
+event-to-info\_time) reflecting the venue's lower trade intensity.
+The locked stage-2 batch size of 64 therefore sits inside binance's
+info\_time bucket population only marginally, and the stage-2 grid
+documented in Section~\ref{sec:methods} is partially sparse on
+binance's info\_time and event clocks for that reason.
+
+\subsection*{Stage~1: RQA characterisation}
+Table~\ref{tab:stage_one_rqa} reports the Marwan-standard RQA scalars
+(recurrence rate, determinism, laminarity, longest diagonal,
+trapping time, entropy of the diagonal-line-length distribution)
+aggregated as mean$\pm$std across the bucket population per (cell,
+clock), at the locked target $RR^{*} = 5\%$. Buckets with $n < 16$
+snapshots (the stage-2 batch viability floor) are excluded from
+aggregation; the line-of-identity is excluded from the diagonal
+counts following the Marwan convention. Diagonal and vertical line
+minimum lengths are $l_{\min} = v_{\min} = 2$. The binance/info\_time
+row is computed on the first $8$ of $40$ admitted buckets due to a
+wallclock cap on the present analysis; the remaining $32$ buckets are
+on disk and available for a full-cap re-run.
+
+\input{content/sections-v2/04-results-discussion/tables/rqa}
+
+The aggregate $\overline{RR}$ is on target ($\in [0.040, 0.050]$) for
+all six (cell, clock) cells except kraken/event ($\overline{RR} =
+0.026$), where the RR-bisection converges below target on the smaller
+$n$ populations characteristic of this clock. $\overline{DET}$ and
+$\overline{LAM}$ separate by clock more sharply than by cell: the
+info\_time clock yields the highest determinism and laminarity at
+both cells (binance: $\overline{DET} = 0.801$,
+$\overline{LAM} = 0.896$; kraken: $0.615, 0.647$), reflecting the
+volume-thresholded info\_time bucketer's tendency to span longer
+quasi-stationary regimes. $\overline{L_{\max}}$ on
+binance/info\_time is large ($90.1$) but proportional to the
+much larger $n$ of those buckets ($n \sim 10^4$, vs. $n \sim 64$
+for binance/event).
+
+\subsection*{Stage~1: distributional structure}
+Figure~\ref{fig:bucket_duration} shows the per-bucket duration
+distribution across the six (cell, clock) panels.
+Figure~\ref{fig:rqa_violins} shows the per-bucket distributions of
+$DET$ and $LAM$ as violins faceted by clock, with one violin per cell
+inside each panel. Figure~\ref{fig:mean_rp} shows the population-mean
+recurrence plot per (cell, clock) at $RR^{*} = 5\%$, computed by
+nearest-neighbour resampling each bucket's binary RP onto a common
+$64 \times 64$ grid and averaging.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{content/sections-v2/04-results-discussion/figures/bucket_duration.png}
+  \caption{Per-bucket duration distributions across the two cells
+  and three clocks (log-scale $x$). The info\_time clock contracts the
+  bucket population substantially relative to physical and event.}
+  \label{fig:bucket_duration}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{content/sections-v2/04-results-discussion/figures/rqa_violins.png}
+  \caption{Per-bucket distributions of $DET$ (top row) and $LAM$
+  (bottom row) at $RR^{*} = 5\%$, faceted by clock; one violin per
+  cell within each panel. The info\_time clock concentrates mass at
+  high $DET$ / $LAM$ for both cells.}
+  \label{fig:rqa_violins}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{content/sections-v2/04-results-discussion/figures/mean_rp_per_clock.png}
+  \caption{Population-mean binary recurrence plot per (cell, clock),
+  $64 \times 64$ resample, $RR^{*} = 5\%$.}
+  \label{fig:mean_rp}
+\end{figure}
+
+\subsection*{Stage~2: training behaviour}
+Table~\ref{tab:stage_two_summary} reports the per-(cell, clock)
+stage-2 execution summary at the locked seed budget of $J{=}1$:
+wallclock at the last logged checkpoint, generator-step count
+($1{,}000$), critic-step count ($5{,}000$), final-100-step EM-gap
+mean$\pm$std, GP-magnitude mean across all critic steps, and the
+GP-magnitude maximum. Pairs without a checkpoint directory on disk
+are marked ``--'' for the step counters and wallclock; pairs whose
+\texttt{diagnostics.msgpack} was flushed but whose checkpoint was
+cut (kraken/info\_time on this run) still expose EM-gap and GP
+statistics from the streamed diagnostics.
+
+\input{content/sections-v2/04-results-discussion/tables/stage_two_summary}
+
+Figure~\ref{fig:em_gap} shows the EM-gap trajectory (raw and
+rolling-100 smoothed) for each successfully trained
+(cell, clock, seed) trio in this run. Four of the six
+(cell, clock) pairs reached the first checkpoint at step $1{,}000$;
+the two un-trained pairs (binance/event and binance/info\_time)
+were not launched on the present hardware schedule and appear as
+empty panels.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{content/sections-v2/04-results-discussion/figures/em_gap_trajectories.png}
+  \caption{Stage-2 EM-gap convergence per trained (cell, clock); raw
+  per-step values (light) and rolling-100 smooth (dark); dashed line
+  marks the final-100-step mean reported in the inset.}
+  \label{fig:em_gap}
+\end{figure}
+
+Figure~\ref{fig:loss_by_cell} aggregates the three primary
+stage-2 signals (EM-gap, GP magnitude, and the critic-loss
+approximation $\hat{L}_D \approx -\text{EM} + \lambda_{\mathrm{GP}}
+\cdot \text{GP}$) per cell, overlaying the available clocks within
+each panel. The view complements Figure~\ref{fig:em_gap} by
+collapsing the (cell, clock) grid into per-cell trajectories and
+exposes that kraken's three trained clocks converge to consistent
+relative EM-gap orderings (event $<$ info\_time $<$ physical) and
+that the GP magnitude across all four trained pairs remains
+materially above the Lipschitz target of $1$ throughout the
+$1{,}000$-step horizon.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{content/sections-v2/04-results-discussion/figures/loss_evolution_by_cell.png}
+  \caption{Stage-2 loss-function evolution aggregated by cell: rows
+  show EM-gap (rolling-100 smooth), gradient-penalty magnitude
+  (symlog-y), and the critic-loss approximation
+  $\hat{L}_D = -\text{EM} + \lambda_{\mathrm{GP}} \cdot \text{GP}$
+  at the locked $\lambda_{\mathrm{GP}}{=}10$. Columns are cells;
+  line style distinguishes the three clocks within each panel.}
+  \label{fig:loss_by_cell}
+\end{figure}
+
+\paragraph{Partial Stability Score.}
+The locked four-axis Stability Score
+(\texttt{StabilityScoreSpec\_v0\_1\_0.json}) requires the
+mode-coverage and critic-loss-curvature axes, which are populated
+only at $\geq 5{,}000$ generator-step checkpoints. The present run's
+training horizon stopped at the first checkpoint (step $1{,}000$),
+so those two axes are empty for every trained pair and the locked
+Score is not computable from this run. We report instead a
+\emph{2-axis partial} Stability Score that uses the EM-gap and
+GP-magnitude axes at equal weight ($0.5$ each), rank-normalised
+across the four trained (cell, clock) pairs. Among the four trained
+pairs, kraken/info\_time ranks highest ($0.83$), kraken/event next
+($0.67$), kraken/physical next ($0.50$), and binance/physical lowest
+($0.00$). The numeric values appear in
+\texttt{figures/partial\_stability\_scores.json} and are not
+report-comparable against article-1's locked 4-axis aggregate; the
+ordering should be read as a within-run ranking only.

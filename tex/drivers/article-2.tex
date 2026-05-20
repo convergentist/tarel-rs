@@ -1,0 +1,46 @@
+\documentclass{tex-article}
+\addbibresource{bibliography/refs.bib}
+\title{TAReL: Temporal Adversarial Reconstruction of High-Frequency
+       Latent Spaces in Financial Markets}
+\author[1]{J. Francisco Munoz-Elguezabal}
+\affil[1]{ITESO --- The Jesuit University of Guadalajara}
+\date{}
+
+\begin{document}\maketitle
+
+\begin{abstract}
+We introduce \textbf{TAReL}, a pipeline that studies cryptocurrency
+limit-order-book microstructure through the geometry of recurrence
+plots and the seed-to-seed reproducibility of generative models
+trained on those plots. Stage~1 reconstructs top-25-level state
+vectors at 250\,ms resolution under three parallel clocks (physical,
+event, information time), buckets them subject to a 60-minute
+parquet-boundary constraint, and writes per-bucket binary recurrence
+plots calibrated to a locked $RR^{*}{=}5\%$ target. Stage~2 trains a
+$128$-dimensional W-GAN-GP on the resulting $64{\times}64$ tensors
+and streams four training diagnostics into a locked four-axis
+Stability Score. We report run \texttt{00000000c002daaaX} on two
+cells, \texttt{binance:BTC-USDC} and \texttt{kraken:BTC-USDC},
+across all three clocks. The Stage-1 RQA characterisation produces
+distinct $DET$ and $LAM$ distributions across clocks at a fixed
+cell, supporting the conjecture that recurrence geometry is a
+clock-dependent fingerprint of liquidity dynamics. Stage~2 trained
+four (cell, clock) pairs to the first checkpoint; we report EM-gap
+convergence and a 2-axis partial Stability Score restricted to the
+axes the present training horizon populates. A third cell
+(\texttt{coinbase:BTC-USDC}) is excluded due to a stage-one
+RR-bisection defect tracked separately.
+\end{abstract}
+
+\input{content/sections-v2/00-introduction/00-introduction}
+\input{content/sections-v2/01-literature-review/00-paper-review}
+\input{content/sections-v2/01-literature-review/01-paper-review}
+\input{content/sections-v2/02-problem-solution/00-problem}
+\input{content/sections-v2/02-problem-solution/01-solution}
+\input{content/sections-v2/03-data-methods/00-data}
+\input{content/sections-v2/03-data-methods/01-methods}
+\input{content/sections-v2/04-results-discussion/00-results}
+\input{content/sections-v2/04-results-discussion/01-discussion}
+\printbibliography
+
+\end{document}

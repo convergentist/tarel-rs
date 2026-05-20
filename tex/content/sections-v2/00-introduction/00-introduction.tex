@@ -1,0 +1,28 @@
+\section{Introduction}
+
+This paper develops and evaluates \textbf{TAReL} (Temporal Adversarial
+Reconstruction of High-Frequency Latent Spaces in Financial Markets), a
+pipeline for studying limit-order-book (LOB) microstructure through the
+geometry of its recurrence plots and through the seed-to-seed
+reproducibility of generative models trained on those plots. Three
+lineages of work intersect with the proposal developed here:
+\begin{itemize}\setlength{\itemsep}{1pt}
+\item Generative modeling of market microstructure dynamics.
+\item Recurrence-plot generation and analysis of financial time series.
+\item Reproducibility analysis for adversarial training in finance.
+\end{itemize}
+Each lineage is briefly contrasted with our setting; the goal is not
+to displace any of these lines but to compose them into a unified
+approach.
+
+The premise the paper is built on is the following: \emph{the
+recurrence structure of an order book --- the geometric pattern of
+when a market briefly returns to a state it has visited before ---
+encodes something invariant about that market's microstructure.} Not
+the prices themselves, not the trades, not the volumes, but the shape
+of how the order book moves through state space over time. If true,
+that shape is a fingerprint. Two markets with similar microstructure
+regimes should produce similar recurrence patterns; two markets with
+dissimilar microstructure should produce visibly different ones. The
+conjecture is unfalsifiable in the abstract but sharply testable
+through the pipeline we develop here.

@@ -1,0 +1,121 @@
+\subsection*{The TAReL pipeline}
+The work breaks into five stages, each producing artifacts the next
+consumes. The pilot reported in
+Section~\ref{sec:results} exercises the first four; the
+fifth is the bridge analysis that ties them together and is,
+formally, the headline result of the production grid.
+
+\paragraph{Stage 1: Bucketed state vectors.}
+Each parquet file of LOB delta updates is replayed through a stateful
+book accumulator that emits reconstructed snapshots of the top-$K$
+levels per side ($K=25$ in our locked configuration, yielding state
+dimension $d = 50$). Each snapshot is summarized as a $50$-dimensional
+state vector on a 10-basis-point grid relative to mid-price (25 price
+bins per side, half-width 250 bps). Snapshots are partitioned into
+buckets under the three clocks described above, subject to the
+constraint that no bucket crosses a 60-minute parquet boundary, and to
+a minimum-snapshot floor of $8$ below which a bucket is logged but
+not analyzed.
+
+Three Layer-2 invariants are locked at this stage: (a) zero-volume
+first snapshot drops the entire window, because baseline normalization
+would be ill-defined; (b) a level priced exactly at the mid
+(basis-point offset $= 0$) credits to bin $0$, not split or excluded;
+(c) volume normalization within a window uses the bid- and ask-side
+total volumes from the \emph{first} snapshot of the window as
+denominators, not the running per-snapshot total. The last invariant
+is the most consequential: it lets liquidity events show up in the
+volume subspace rather than be aliased away by per-snapshot
+renormalization. All three invariants are property-tested in the
+per-PR CI gate.
+
+\paragraph{Stage 2: Distance plots, recurrence plots, normalized
+tensors.}
+For each bucket $B^{(m,\kappa)}_k$ the $50$-dimensional state vectors
+are subjected to all-pairs Euclidean distance, producing a distance
+plot $D^{(k)}$ of size $|B_k| \times |B_k|$. The recurrence-rate
+target is locked at $RR^{*} = 0.05$ for the headline analysis and
+$RR^{*} = 0.01$ for an appendix ablation. Because $RR(\varepsilon)$ is
+a non-decreasing step function, we compute the threshold via
+bisection on the normalized distance matrix with at most 30
+iterations, followed by a final endpoint-refinement sweep that
+explicitly tests the two step values straddling the converged
+boundary and selects the closer one. The refinement is necessary
+because real LOB-derived distance plots routinely contain clusters of
+identical distances; without it, the achieved recurrence rate misses
+the optimum by up to one cluster width and the achieved rate appears
+as a plateau several percent away from the target.
+
+The resulting recurrence plot is bicubically resampled
+(Catmull--Rom kernel, corner-aligned coordinate convention) to the
+locked $64 \times 64$ size that the W-GAN-GP architecture expects,
+and per-bucket min--max normalized to $[-1, 1]$. The normalization is
+invertible via a persisted $(\min, \max)$ tuple, so generated samples
+can be mapped back to the original distance scale for downstream
+visualization. A Wasserstein-1 distance variant on per-snapshot CDFs
+is implemented behind a typed enum for an appendix ablation; the
+headline analysis uses Euclidean.
+
+The phase-space embedding parameters $(m, \tau)$ are estimated from
+the data using standard nonlinear-dynamics procedures: $\tau$ via the
+multivariate average mutual information (AMI) at its first local
+minimum, $m$ via the false nearest neighbors (FNN)
+method~\cite{kennel1992}.
+
+We retain both the binary recurrence plot at $RR^{*} = 0.05$ as the
+quantitative input to RQA and the continuous distance plot as the
+input to the W-GAN-GP, following the distinction articulated by
+Marwan~\cite{marwan2008} between thresholded recurrence and ``global''
+(un-thresholded) recurrence. The dual-pipeline design is deliberate:
+RQA depends on the binary structure for its line-counting primitives,
+whereas a CNN-based generator benefits from the gradient information
+preserved by the continuous distance plot.
+
+\paragraph{Stage 3: Stationarity Score.}
+A per-instrument Stationarity Score $S^{\text{stat}}_m \in [0,1]$ is
+constructed as a rank-normalised aggregate of three components
+computed over the per-bucket RQA scalar populations: a Kolmogorov–
+Smirnov distance across session pairs, a hierarchical
+within/between-instrument variance ratio, and a Hill tail-index
+deviation from the $\alpha = 2$ moderate-tails reference. The three
+components are combined with pre-registered locked weights
+$[0.4, 0.3, 0.3]$, rank-normalised across the instrument population
+within each (clock, scalar) cell, and weighted-summed into a single
+score per instrument. The combinator is committed as
+\texttt{StationarityScoreSpec\_v0\_1\_0.json} \emph{before} any
+inference touches real data, and a unit test enforces byte-lockstep
+between the on-disk JSON and the in-code constructor.
+
+\paragraph{Stage 4: W-GAN-GP and four-axis Stability Score.}
+For each $(\text{instrument}, \text{seed}, \text{clock})$ triple a
+fresh W-GAN-GP is trained on the normalized $64 \times 64$
+recurrence-plot tensors. Four diagnostics are streamed to a per-cell
+MessagePack file in length-prefixed chunks: \emph{EM-gap}
+($\mathbb{E}_{\text{real}}[D_\phi] - \mathbb{E}_{\text{fake}}[D_\phi]$,
+the Wasserstein-1 distance estimator), \emph{GP magnitude} (per
+critic-step gradient-penalty value), \emph{mode coverage} (count of
+generated samples within the median training-pairwise $L_2$ of any
+training sample, computed at each $5{,}000$-generator-step
+checkpoint), and \emph{critic-loss curvature} (a three-point finite
+difference of the generator loss along the last gradient direction at
+each checkpoint).
+
+The four diagnostics are aggregated per instrument across the seed
+population with pre-registered equal weights $[0.25, 0.25, 0.25,
+0.25]$ and a cross-instrument rank-normalisation policy, producing a
+single Stability Score per instrument. The combinator is committed as
+\texttt{StabilityScoreSpec\_v0\_1\_0.json} under the same lockstep
+test as Stage~3.
+
+A determinism contract is enforced at process start: per-(experiment,
+instrument, seed, purpose) RNG seeds are derived as the first 8 bytes
+of $\mathrm{SHA\text{-}256}(\text{``tarel}|\text{v1''} \,\Vert\,
+e_{\text{seed}} \,\Vert\, \pi \,\Vert\, c_m \,\Vert\, j)$ with
+$\pi \in \{\text{init}, \text{sampler}\}$, the cuDNN benchmark flag is
+disabled to force deterministic convolution-algorithm selection, and
+\texttt{tch::manual\_seed} together with
+\texttt{tch::Cuda::manual\_seed\_all} are called before any tensor
+allocation. With this in place, Stages~1--3 produce bit-identical
+artifacts on rerun; Stage~4 produces artifacts that differ at the
+\texttt{f64} ULP due to non-associative parallel reductions in
+BLAS-backed matmuls but agree on every aggregated score.

@@ -1,0 +1,92 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection*{Clock-invariance and the fingerprint conjecture}
+The Stage-1 results in Table~\ref{tab:stage_one_rqa} and
+Figure~\ref{fig:rqa_violins} bear on the central conjecture of
+Section~\ref{sec:problem}: that recurrence-plot geometry is a
+fingerprint of the underlying microstructure. With two cells reported
+in this run, the conjecture cannot be tested as a falsifiable
+cross-venue claim (the $H_1$ Spearman test of
+Equation~\ref{eq:h1} requires $M \geq 5$ instruments under the
+$B = 10{,}000$ label-permutation null to admit a one-sided
+$p \leq 0.05$). What we can report is a descriptive pattern: the
+spread of $\overline{DET}$ \emph{across cells} within a fixed clock
+is comparable to the spread \emph{across clocks} within a fixed cell.
+For physical clock, binance and kraken sit at $\overline{DET} \in
+\{0.626, 0.494\}$; for info\_time, $\{0.801, 0.615\}$. The
+within-clock spread is on the order of $\Delta \overline{DET} \sim
+0.1$--$0.2$, and the within-cell spread across clocks is on the same
+order. This is the first sign that the clock choice is not a free
+parameter --- it materially changes the recurrence-geometry summary
+of the same underlying LOB --- and it argues for reporting every
+downstream finding under all three clocks, as our pipeline already
+does.
+
+The info\_time clock concentrates mass at high determinism and
+laminarity in both cells. Mechanically, this reflects the
+volume-thresholded bucketer's design: each info\_time bucket spans a
+calibrated $30$--$120$ second window in which a fixed cumulative
+volume is exchanged, so the within-bucket trajectory tends to be
+locally stationary by construction. The mean-recurrence-plot panels
+in Figure~\ref{fig:mean_rp} make this visible: the info\_time panels
+exhibit broad off-diagonal block structure characteristic of long
+laminar segments, whereas the event panels concentrate mass near the
+main diagonal with shorter diagonal lines. This is consistent with
+article-1's qualitative reading of the four RP regimes
+(deterministic, stochastic, stationary, oscillatory) and supports
+treating the three clocks as distinct distributions rather than
+redundant views of the same underlying process.
+
+\subsection*{Stage-2 training behaviour and remaining unmeasured
+axes}
+Four of the six target (cell, clock) trainings completed at least the
+first checkpoint (step $1{,}000$), as shown in
+Figure~\ref{fig:em_gap}. EM-gap final-100-step means span
+$[17.3, 51.2]$ across the four trained pairs; the spread is
+$\sim 3\times$ larger than the per-pair final-100-step standard
+deviation, suggesting that within-trajectory noise at this short
+horizon is much smaller than cross-(cell, clock) variation in
+asymptotic Wasserstein distance. Two trainings (binance/event and
+binance/info\_time) did not produce stage-2 artefacts in this run;
+the binance/info\_time pool of $40$ buckets sits at the
+batch-size-64 viability boundary and is most likely the reason it
+was not scheduled. The natural remediation is the production-grid
+re-run discussed in the
+introduction, not a change to the architecture.
+
+The locked Stability Score depends on mode-coverage and critic-loss
+curvature, which are populated only at $\geq 5{,}000$
+generator-step checkpoints; in this run training stopped at the
+first checkpoint and both axes are empty. The 2-axis partial Score
+we report in Section~\ref{sec:results} is an ordering across the four
+trained pairs, not a value comparable to article-1's locked
+4-axis aggregate. The two findings worth carrying forward are: (i)
+the kraken cell is the more stable training target on this short
+horizon, with all three kraken clocks ranking above binance/physical
+on the 2-axis partial score; (ii) the GP-magnitude across all four
+trained pairs sits well above the Lipschitz target of $1$ (the four
+mean GP values are $\{1.22, 1.36, 1.58, 1.65\}$), indicating that the
+locked $\lambda_{\mathrm{GP}} = 10$ is too low to enforce the
+constraint at the present generator capacity at step $1{,}000$. This
+matches article-1's observation that a downward sweep of
+$\lambda_{\mathrm{GP}}$ rather than corpus expansion is the natural
+follow-on, and we adopt that framing for the production grid.
+
+\subsection*{Limitations}
+Three limitations are explicit. First, only two cells are reported,
+which precludes the cross-venue $H_1$ Spearman test in any
+statistically meaningful form. The natural minimum population is
+$M = 5$ cells. Second, the seed budget for the reported stage-2
+trainings is $J = 1$ (only \texttt{seed\_idx} $= 0$ exists on disk
+for every trained pair); per-cell variance, the empirical primitive
+of the Stability Score, is therefore not estimable from this run.
+The natural minimum is $J = 5$. Third, the training horizon of
+$1{,}000$ generator steps is too short to populate the
+mode-coverage and curvature axes of the locked Stability Score;
+extending the horizon to $\geq 5{,}000$ generator steps with
+checkpointing at that cadence is a precondition for reporting the
+full locked aggregate. None of these limitations changes the
+architecture under study; all three are scaling and seed-population
+questions that we treat as the natural follow-on path to the
+production grid.

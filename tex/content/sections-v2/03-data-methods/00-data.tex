@@ -1,0 +1,57 @@
+\section{Data}
+\label{sec:data}
+
+\subsection*{Cells reported}
+The present analysis reports two cells: $\texttt{binance:BTC-USDC}$
+and $\texttt{kraken:BTC-USDC}$. A third cell, $\texttt{coinbase:BTC-
+USDC}$, was ingested under the same pipeline but is excluded from
+article-level results: the stage-1 RR-bisection on this run's
+coinbase distance plots collapsed to $\mathrm{RR}_{\text{achieved}} =
+0$ for $100\%$ of the coinbase/physical and coinbase/info\_time
+admitted buckets and for $99.92\%$ of coinbase/event, producing
+degenerate (off-diagonal-zero) binary recurrence plots that cannot
+be RQA-aggregated. Binance and kraken decoded normally with achieved
+$RR \in [0.04, 0.06]$ at the locked $RR^{*} = 0.05$ target. The
+defect is tracked as a tarel-rs stage-one issue independent of the
+architecture under study.
+
+\subsection*{Raw and consolidated data}
+LOB delta streams are acquired per cell in flush-time chunks as
+Apache Parquet files spanning a seven-day window. Each file carries
+the delta schema $[\,\texttt{timestamp\_ns}, \texttt{symbol},
+\texttt{exchange}, \texttt{side}, \texttt{level}, \texttt{price},
+\texttt{size}\,]$, with $\texttt{size}=0$ signalling a level
+deletion. For each cell, the in-house \texttt{takens\_consolidate}
+utility (Rust, streaming Apache-Arrow Parquet writer) concatenates the
+per-shard files in lexicographic-=-chronological order, asserts non-
+strict timestamp monotonicity across boundaries, and emits one
+consolidated Parquet at \texttt{datasets/consolidated/<exchange>/BTC-
+USDC.parquet}. The consolidated file's footer key-value metadata
+carries the tool version, a UTC creation timestamp, the source-file
+count, an encoding-invariant \texttt{source\_corpus\_sha256}
+(\texttt{SHA-256} over the sorted list of per-file SHAs), the total
+row count, the $(\min, \max)$ timestamps, and the canonical
+exchange/symbol pair. Tarel's stage-1 writer lifts the
+\texttt{source\_corpus\_sha256} verbatim into
+\texttt{cell\_metadata.json}, providing a single reproducibility
+identifier independent of Parquet re-encoding.
+
+\subsection*{Recurrence-plot corpus and run-directory artefacts}
+Stage 1 feeds the consolidated stream through a six-step pipeline
+(parquet ingest, $k=25$-level book reconstruction yielding state
+vectors in $\mathbb{R}^{2k=50}$, dual-subspace price-and-volume
+vectorisation, pairwise $\ell_2$ distance, $\alpha=0.5$-weighted
+combination of the two subspaces, and grayscale plotting). It
+writes, per clock under
+\texttt{runs/<exp\_seed>/stage\_one/recurrence/<cell>/<clock>/}, a
+directory of MessagePack-serialised $64 \times 64$ tensors
+normalised to $[-1, 1]$ and ready for training. Each bucket is
+accompanied by JSON-Lines records of its distance plot and
+dual-threshold recurrence plots ($RR = 5\%$ headline,
+$RR = 1\%$ appendix), a $4 \times 4$ PNG sanity grid, and per-bucket
+RQA scalars. Stage~2 training writes a streamed
+\texttt{diagnostics.msgpack} (EM-gap, GP, mode-coverage, and
+critic-curvature axes), per-1{,}000-step checkpoints (generator and
+critic VarStores plus optimiser-step metadata), and an
+experiment-wide \texttt{StabilityScoreSpec\_v0\_1\_0.json} pinning
+hyperparameters for provenance.

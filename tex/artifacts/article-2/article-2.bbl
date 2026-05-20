@@ -1,0 +1,503 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{wiese2020quant}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=f20258946e9ea516d775c07e4952da71}{%
+           family={Wiese},
+           familyi={W\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=4e232d80e09e7a78a87869354ae1c841}{%
+           family={Knobloch},
+           familyi={K\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+        {{hash=52dc5d8315405e5c493653484fa2c321}{%
+           family={Korn},
+           familyi={K\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+        {{hash=d388c2851d0652d79eaa04353651c923}{%
+           family={Kretschmer},
+           familyi={K\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{ae2441c608f907f03513098ba35b2da9}
+      \strng{fullhash}{cbcaf36e9a4a6f7cab77c93c64026672}
+      \strng{fullhashraw}{cbcaf36e9a4a6f7cab77c93c64026672}
+      \strng{bibnamehash}{ae2441c608f907f03513098ba35b2da9}
+      \strng{authorbibnamehash}{ae2441c608f907f03513098ba35b2da9}
+      \strng{authornamehash}{ae2441c608f907f03513098ba35b2da9}
+      \strng{authorfullhash}{cbcaf36e9a4a6f7cab77c93c64026672}
+      \strng{authorfullhashraw}{cbcaf36e9a4a6f7cab77c93c64026672}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Quantitative Finance}
+      \field{title}{Quant {GAN}s: deep generation of financial time series}
+      \field{year}{2020}
+    \endentry
+    \entry{takahashi2019modeling}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=f87163df89d207b686b75a6a76b6ffbe}{%
+           family={Takahashi},
+           familyi={T\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod}}}%
+        {{hash=ff38b98d2dc65002f66d028a85b9d58d}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Y.},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=3848a2234644ae6bb8929087411bdfe8}{%
+           family={Tanaka-Ishii},
+           familyi={T\bibinithyphendelim I\bibinitperiod},
+           given={K.},
+           giveni={K\bibinitperiod}}}%
+      }
+      \strng{namehash}{3e9ab86b13e6b41b9dc9248c6713522f}
+      \strng{fullhash}{3e9ab86b13e6b41b9dc9248c6713522f}
+      \strng{fullhashraw}{3e9ab86b13e6b41b9dc9248c6713522f}
+      \strng{bibnamehash}{3e9ab86b13e6b41b9dc9248c6713522f}
+      \strng{authorbibnamehash}{3e9ab86b13e6b41b9dc9248c6713522f}
+      \strng{authornamehash}{3e9ab86b13e6b41b9dc9248c6713522f}
+      \strng{authorfullhash}{3e9ab86b13e6b41b9dc9248c6713522f}
+      \strng{authorfullhashraw}{3e9ab86b13e6b41b9dc9248c6713522f}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Physica A: Statistical Mechanics and its Applications}
+      \field{title}{Modeling financial time-series with generative adversarial networks}
+      \field{year}{2019}
+    \endentry
+    \entry{koshiyama2020generative}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=47b0317ec825aeb760f9b5fc93364565}{%
+           family={Koshiyama},
+           familyi={K\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=63ae3f9d43a48bbe760f850f44f41881}{%
+           family={Firoozye},
+           familyi={F\bibinitperiod},
+           given={N.},
+           giveni={N\bibinitperiod}}}%
+        {{hash=0f3e29d2632b5720a579c4856b3eb447}{%
+           family={Treleaven},
+           familyi={T\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{7959063398dc3ceec90242d958fdd186}
+      \strng{fullhash}{7959063398dc3ceec90242d958fdd186}
+      \strng{fullhashraw}{7959063398dc3ceec90242d958fdd186}
+      \strng{bibnamehash}{7959063398dc3ceec90242d958fdd186}
+      \strng{authorbibnamehash}{7959063398dc3ceec90242d958fdd186}
+      \strng{authornamehash}{7959063398dc3ceec90242d958fdd186}
+      \strng{authorfullhash}{7959063398dc3ceec90242d958fdd186}
+      \strng{authorfullhashraw}{7959063398dc3ceec90242d958fdd186}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Quantitative Finance}
+      \field{title}{Generative adversarial networks for financial trading strategies fine-tuning and combination}
+      \field{year}{2020}
+    \endentry
+    \entry{eckmann1987}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=c411f2ed87af0c4a2431c9bab2d3aa1e}{%
+           family={Eckmann},
+           familyi={E\bibinitperiod},
+           given={J.-P.},
+           giveni={J\bibinithyphendelim P\bibinitperiod}}}%
+        {{hash=1f0ab2d1d4f0b7b800cfb65b2e20b1e7}{%
+           family={Kamphorst},
+           familyi={K\bibinitperiod},
+           given={S.\bibnamedelimi O.},
+           giveni={S\bibinitperiod\bibinitdelim O\bibinitperiod}}}%
+        {{hash=ca2635ff5c7783e665ff5ee96a49244d}{%
+           family={Ruelle},
+           familyi={R\bibinitperiod},
+           given={D.},
+           giveni={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{75d1f3bdcf6a1483b649cac804aad822}
+      \strng{fullhash}{75d1f3bdcf6a1483b649cac804aad822}
+      \strng{fullhashraw}{75d1f3bdcf6a1483b649cac804aad822}
+      \strng{bibnamehash}{75d1f3bdcf6a1483b649cac804aad822}
+      \strng{authorbibnamehash}{75d1f3bdcf6a1483b649cac804aad822}
+      \strng{authornamehash}{75d1f3bdcf6a1483b649cac804aad822}
+      \strng{authorfullhash}{75d1f3bdcf6a1483b649cac804aad822}
+      \strng{authorfullhashraw}{75d1f3bdcf6a1483b649cac804aad822}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Europhysics Letters}
+      \field{title}{Recurrence plots of dynamical systems}
+      \field{year}{1987}
+    \endentry
+    \entry{zbilut1992}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=245d44de2ed09c633bdd25b78dada2c3}{%
+           family={Zbilut},
+           familyi={Z\bibinitperiod},
+           given={J.\bibnamedelimi P.},
+           giveni={J\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+        {{hash=6db0241b1a8b1da0f28e784a2e1b61e5}{%
+           family={Webber\bibnamedelima Jr.},
+           familyi={W\bibinitperiod\bibinitdelim J\bibinitperiod},
+           given={C.\bibnamedelimi L.},
+           giveni={C\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \strng{namehash}{568691e63465a5eb140cb777151ff933}
+      \strng{fullhash}{568691e63465a5eb140cb777151ff933}
+      \strng{fullhashraw}{568691e63465a5eb140cb777151ff933}
+      \strng{bibnamehash}{568691e63465a5eb140cb777151ff933}
+      \strng{authorbibnamehash}{568691e63465a5eb140cb777151ff933}
+      \strng{authornamehash}{568691e63465a5eb140cb777151ff933}
+      \strng{authorfullhash}{568691e63465a5eb140cb777151ff933}
+      \strng{authorfullhashraw}{568691e63465a5eb140cb777151ff933}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Physics Letters A}
+      \field{title}{Embeddings and delays as derived from quantification of recurrence plots}
+      \field{year}{1992}
+    \endentry
+    \entry{marwan2007}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=e14b0beb312b98db79ca2cc8d194c175}{%
+           family={Marwan},
+           familyi={M\bibinitperiod},
+           given={N.},
+           giveni={N\bibinitperiod}}}%
+        {{hash=f4ca621a4586dd7427bc11b9a6c7553f}{%
+           family={Romano},
+           familyi={R\bibinitperiod},
+           given={M.\bibnamedelimi C.},
+           giveni={M\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+        {{hash=f9b27dc2667c0f61924bc4d39915c037}{%
+           family={Thiel},
+           familyi={T\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=da4b371cbc78eec1d156d68e8c3ababa}{%
+           family={Kurths},
+           familyi={K\bibinitperiod},
+           given={J.},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{2a45aecd731e3c4e3e2d963c3c2c0338}
+      \strng{fullhash}{794f0581a2da3b21d13f8e393d35e8f4}
+      \strng{fullhashraw}{794f0581a2da3b21d13f8e393d35e8f4}
+      \strng{bibnamehash}{2a45aecd731e3c4e3e2d963c3c2c0338}
+      \strng{authorbibnamehash}{2a45aecd731e3c4e3e2d963c3c2c0338}
+      \strng{authornamehash}{2a45aecd731e3c4e3e2d963c3c2c0338}
+      \strng{authorfullhash}{794f0581a2da3b21d13f8e393d35e8f4}
+      \strng{authorfullhashraw}{794f0581a2da3b21d13f8e393d35e8f4}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Physics Reports}
+      \field{title}{Recurrence plots for the analysis of complex systems}
+      \field{year}{2007}
+    \endentry
+    \entry{strozzi2002recurrence}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=a75ff39bb11fa7acfa0f42c015ebbcb2}{%
+           family={Strozzi},
+           familyi={S\bibinitperiod},
+           given={F.},
+           giveni={F\bibinitperiod}}}%
+        {{hash=feb652bd98a37905ac78dd06feceec0a}{%
+           family={Zaldívar},
+           familyi={Z\bibinitperiod},
+           given={J.-M.},
+           giveni={J\bibinithyphendelim M\bibinitperiod}}}%
+        {{hash=245d44de2ed09c633bdd25b78dada2c3}{%
+           family={Zbilut},
+           familyi={Z\bibinitperiod},
+           given={J.\bibnamedelimi P.},
+           giveni={J\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \strng{namehash}{3d57936ffcfbeddba4b98f0443a2c976}
+      \strng{fullhash}{3d57936ffcfbeddba4b98f0443a2c976}
+      \strng{fullhashraw}{3d57936ffcfbeddba4b98f0443a2c976}
+      \strng{bibnamehash}{3d57936ffcfbeddba4b98f0443a2c976}
+      \strng{authorbibnamehash}{3d57936ffcfbeddba4b98f0443a2c976}
+      \strng{authornamehash}{3d57936ffcfbeddba4b98f0443a2c976}
+      \strng{authorfullhash}{3d57936ffcfbeddba4b98f0443a2c976}
+      \strng{authorfullhashraw}{3d57936ffcfbeddba4b98f0443a2c976}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Physica A: Statistical Mechanics and its Applications}
+      \field{title}{Application of nonlinear time series analysis techniques to high-frequency currency exchange data}
+      \field{year}{2002}
+    \endentry
+    \entry{safa2024}{misc}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=38e562033aab372d1f146dd52e0e2147}{%
+           family={Safa},
+           familyi={S\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{8b89fa0024ea4350f497353bba1e37a2}
+      \strng{fullhash}{8b89fa0024ea4350f497353bba1e37a2}
+      \strng{fullhashraw}{8b89fa0024ea4350f497353bba1e37a2}
+      \strng{bibnamehash}{8b89fa0024ea4350f497353bba1e37a2}
+      \strng{authorbibnamehash}{8b89fa0024ea4350f497353bba1e37a2}
+      \strng{authornamehash}{8b89fa0024ea4350f497353bba1e37a2}
+      \strng{authorfullhash}{8b89fa0024ea4350f497353bba1e37a2}
+      \strng{authorfullhashraw}{8b89fa0024ea4350f497353bba1e37a2}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Working paper; exact venue to be confirmed at camera-ready.}
+      \field{title}{Recurrence-plot encodings of limit-order-book streams for manipulation detection}
+      \field{year}{2024}
+    \endentry
+    \entry{heusel2017fid}{inproceedings}{}{}
+      \name{author}{5}{}{%
+        {{hash=5e29bc266a4f5464a5214bed4db33488}{%
+           family={Heusel},
+           familyi={H\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=9fe5bb35efc3ff69cae7cb65b751b4e1}{%
+           family={Ramsauer},
+           familyi={R\bibinitperiod},
+           given={H.},
+           giveni={H\bibinitperiod}}}%
+        {{hash=40a0899d1db75d319984795967985066}{%
+           family={Unterthiner},
+           familyi={U\bibinitperiod},
+           given={T.},
+           giveni={T\bibinitperiod}}}%
+        {{hash=e9abe102f5f759a433bc169edc0dfd61}{%
+           family={Nessler},
+           familyi={N\bibinitperiod},
+           given={B.},
+           giveni={B\bibinitperiod}}}%
+        {{hash=67eed9a763828f8510ead534591a2d63}{%
+           family={Hochreiter},
+           familyi={H\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{f66561387d8ca88b82723ff3286a00ac}
+      \strng{fullhash}{be0d93a36230703c561ba5071d59bdb7}
+      \strng{fullhashraw}{be0d93a36230703c561ba5071d59bdb7}
+      \strng{bibnamehash}{f66561387d8ca88b82723ff3286a00ac}
+      \strng{authorbibnamehash}{f66561387d8ca88b82723ff3286a00ac}
+      \strng{authornamehash}{f66561387d8ca88b82723ff3286a00ac}
+      \strng{authorfullhash}{be0d93a36230703c561ba5071d59bdb7}
+      \strng{authorfullhashraw}{be0d93a36230703c561ba5071d59bdb7}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Advances in Neural Information Processing Systems}
+      \field{title}{{GANs} trained by a two time-scale update rule converge to a local {Nash} equilibrium}
+      \field{year}{2017}
+    \endentry
+    \entry{borji2022pros}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=470a739355bf6a0f504216db4dd00ef5}{%
+           family={Borji},
+           familyi={B\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{470a739355bf6a0f504216db4dd00ef5}
+      \strng{fullhash}{470a739355bf6a0f504216db4dd00ef5}
+      \strng{fullhashraw}{470a739355bf6a0f504216db4dd00ef5}
+      \strng{bibnamehash}{470a739355bf6a0f504216db4dd00ef5}
+      \strng{authorbibnamehash}{470a739355bf6a0f504216db4dd00ef5}
+      \strng{authornamehash}{470a739355bf6a0f504216db4dd00ef5}
+      \strng{authorfullhash}{470a739355bf6a0f504216db4dd00ef5}
+      \strng{authorfullhashraw}{470a739355bf6a0f504216db4dd00ef5}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Computer Vision and Image Understanding}
+      \field{title}{Pros and cons of {GAN} evaluation measures: new developments}
+      \field{year}{2022}
+    \endentry
+    \entry{lucic2018gans}{inproceedings}{}{}
+      \name{author}{5}{}{%
+        {{hash=fed13d403ea4283f4444443ce24b343e}{%
+           family={Lucic},
+           familyi={L\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=cc02de201873a3fb110800a34ae62009}{%
+           family={Kurach},
+           familyi={K\bibinitperiod},
+           given={K.},
+           giveni={K\bibinitperiod}}}%
+        {{hash=eaab79c7f2bb3bf30b87a7258149e1c7}{%
+           family={Michalski},
+           familyi={M\bibinitperiod},
+           given={M.},
+           giveni={M\bibinitperiod}}}%
+        {{hash=73f611a4d02c8e18bbfc4a0cbbebe83b}{%
+           family={Gelly},
+           familyi={G\bibinitperiod},
+           given={S.},
+           giveni={S\bibinitperiod}}}%
+        {{hash=050363f66c88e46705951e5b7e5332bc}{%
+           family={Bousquet},
+           familyi={B\bibinitperiod},
+           given={O.},
+           giveni={O\bibinitperiod}}}%
+      }
+      \strng{namehash}{89cf03cf57ec8f72fd991000c207fd87}
+      \strng{fullhash}{81afb1b9b860a50fd37ccf3f8103ee70}
+      \strng{fullhashraw}{81afb1b9b860a50fd37ccf3f8103ee70}
+      \strng{bibnamehash}{89cf03cf57ec8f72fd991000c207fd87}
+      \strng{authorbibnamehash}{89cf03cf57ec8f72fd991000c207fd87}
+      \strng{authornamehash}{89cf03cf57ec8f72fd991000c207fd87}
+      \strng{authorfullhash}{81afb1b9b860a50fd37ccf3f8103ee70}
+      \strng{authorfullhashraw}{81afb1b9b860a50fd37ccf3f8103ee70}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Advances in Neural Information Processing Systems}
+      \field{title}{Are {GAN}s created equal? A large-scale study}
+      \field{year}{2018}
+    \endentry
+    \entry{briola2024}{misc}{}{}
+      \name{author}{4}{}{%
+        {{hash=0cf008a215c8fbd7921ea1ba86b35b0e}{%
+           family={Briola},
+           familyi={B\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod}}}%
+        {{hash=ef5aaed9b9674239bf59432c0418f97a}{%
+           family={Vidal-Tomas},
+           familyi={V\bibinithyphendelim T\bibinitperiod},
+           given={D.},
+           giveni={D\bibinitperiod}}}%
+        {{hash=61ad10c626e1d641e0b1d7b5f48d3233}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Y.},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=35ea5b8686e7e4cf566603e69bc84a3f}{%
+           family={Aste},
+           familyi={A\bibinitperiod},
+           given={T.},
+           giveni={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{e0e8856ef27de80557c89c2a4845450d}
+      \strng{fullhash}{e5bef487a999e0906a55fbf62a17025e}
+      \strng{fullhashraw}{e5bef487a999e0906a55fbf62a17025e}
+      \strng{bibnamehash}{e0e8856ef27de80557c89c2a4845450d}
+      \strng{authorbibnamehash}{e0e8856ef27de80557c89c2a4845450d}
+      \strng{authornamehash}{e0e8856ef27de80557c89c2a4845450d}
+      \strng{authorfullhash}{e5bef487a999e0906a55fbf62a17025e}
+      \strng{authorfullhashraw}{e5bef487a999e0906a55fbf62a17025e}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Working paper; exact venue to be confirmed at camera-ready.}
+      \field{title}{Anatomy of a {LOB}: stylised facts of equity limit-order books}
+      \field{year}{2024}
+    \endentry
+    \entry{kennel1992}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=ce6fd628ea5b602573646aca449609ea}{%
+           family={Kennel},
+           familyi={K\bibinitperiod},
+           given={M.\bibnamedelimi B.},
+           giveni={M\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=344a3ac6fefab29c623db9e5faa39878}{%
+           family={Brown},
+           familyi={B\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+        {{hash=a413613f1987a2d2eeeed1820095cdda}{%
+           family={Abarbanel},
+           familyi={A\bibinitperiod},
+           given={H.\bibnamedelimi D.\bibnamedelimi I.},
+           giveni={H\bibinitperiod\bibinitdelim D\bibinitperiod\bibinitdelim I\bibinitperiod}}}%
+      }
+      \strng{namehash}{dd47c91a6d1d5aacd8b17740644da85f}
+      \strng{fullhash}{dd47c91a6d1d5aacd8b17740644da85f}
+      \strng{fullhashraw}{dd47c91a6d1d5aacd8b17740644da85f}
+      \strng{bibnamehash}{dd47c91a6d1d5aacd8b17740644da85f}
+      \strng{authorbibnamehash}{dd47c91a6d1d5aacd8b17740644da85f}
+      \strng{authornamehash}{dd47c91a6d1d5aacd8b17740644da85f}
+      \strng{authorfullhash}{dd47c91a6d1d5aacd8b17740644da85f}
+      \strng{authorfullhashraw}{dd47c91a6d1d5aacd8b17740644da85f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Physical Review A}
+      \field{title}{Determining embedding dimension for phase-space reconstruction using a geometrical construction}
+      \field{year}{1992}
+    \endentry
+    \entry{marwan2008}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=e14b0beb312b98db79ca2cc8d194c175}{%
+           family={Marwan},
+           familyi={M\bibinitperiod},
+           given={N.},
+           giveni={N\bibinitperiod}}}%
+      }
+      \strng{namehash}{e14b0beb312b98db79ca2cc8d194c175}
+      \strng{fullhash}{e14b0beb312b98db79ca2cc8d194c175}
+      \strng{fullhashraw}{e14b0beb312b98db79ca2cc8d194c175}
+      \strng{bibnamehash}{e14b0beb312b98db79ca2cc8d194c175}
+      \strng{authorbibnamehash}{e14b0beb312b98db79ca2cc8d194c175}
+      \strng{authornamehash}{e14b0beb312b98db79ca2cc8d194c175}
+      \strng{authorfullhash}{e14b0beb312b98db79ca2cc8d194c175}
+      \strng{authorfullhashraw}{e14b0beb312b98db79ca2cc8d194c175}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{The European Physical Journal Special Topics}
+      \field{title}{A historical review of recurrence plots}
+      \field{year}{2008}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

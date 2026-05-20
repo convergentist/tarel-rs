@@ -24,6 +24,7 @@ $bibtex_use  = 2;          # biber/bibtex runs automatically when needed
 # --- per-driver routing table ------------------------------------------------
 our %artifact_dir = (
     'article.tex'           => 'artifacts/article',
+    'article-2.tex'         => 'artifacts/article-2',
     'notes-generator.tex'   => 'artifacts/notes',
     'notes-critic.tex'      => 'artifacts/notes',
     'figure-generator.tex'  => 'artifacts/figures',

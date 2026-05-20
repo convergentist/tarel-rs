@@ -1,0 +1,29 @@
+\subsection*{Stability and reproducibility of GAN training}
+The instability of adversarial training is a long-standing concern.
+Heusel et al.~\cite{heusel2017fid} proposed the Fr\'echet Inception
+Distance and a two-timescale update rule.
+Borji~\cite{borji2022pros} surveys the proliferation of evaluation
+metrics that followed. None of these directly target seed-to-seed
+reproducibility of training behavior on a \emph{fixed} dataset; they
+are distributional similarity measures evaluated on a single trained
+model. Lucic et al.~\cite{lucic2018gans} argued that hyperparameter
+sensitivity dominates apparent GAN improvements and multi-seed
+training is the only honest way to compare architectures; their
+analysis aggregates seeds within a single dataset, while we explicitly
+compute per-dataset seed-variance and use it as a discriminative
+scalar \emph{across} datasets. The four-axis Stability Score we
+describe in Section~\ref{sec:methods} is, to our knowledge, the first
+such aggregate in the financial time series setting.
+
+\subsection*{Microstructural taxonomy}
+Briola et al.~\cite{briola2024} proposed a static taxonomy of equity
+LOBs into large-/small-tick and high-/low-information regimes based on
+spread, queue imbalance and price-impact statistics computed across
+three years of NASDAQ data. The taxonomy presumes the macroscopic
+stability of spread distributions over a multi-year window. We argue
+that this assumption fails in crypto: spreads transition from
+large-tick to small-tick behavior within seconds during liquidation
+cascades, so any taxonomy that aspires to clock-invariance must be
+dynamic, regime-aware, and computed on a rolling basis. The
+Stationarity Score we introduce is one such dynamic analogue and is,
+in fact, a crypto-adapted refactoring of Briola et al.'s intent.

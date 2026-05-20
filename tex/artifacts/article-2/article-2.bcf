@@ -2376,6 +2376,20 @@
     <bcf:datasource type="file" datatype="bibtex" glob="false">bibliography/refs.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
+    <bcf:citekey order="1" intorder="1">wiese2020quant</bcf:citekey>
+    <bcf:citekey order="2" intorder="1">takahashi2019modeling</bcf:citekey>
+    <bcf:citekey order="3" intorder="1">koshiyama2020generative</bcf:citekey>
+    <bcf:citekey order="4" intorder="1">eckmann1987</bcf:citekey>
+    <bcf:citekey order="5" intorder="1">zbilut1992</bcf:citekey>
+    <bcf:citekey order="6" intorder="1">marwan2007</bcf:citekey>
+    <bcf:citekey order="7" intorder="1">strozzi2002recurrence</bcf:citekey>
+    <bcf:citekey order="8" intorder="1">safa2024</bcf:citekey>
+    <bcf:citekey order="9" intorder="1">heusel2017fid</bcf:citekey>
+    <bcf:citekey order="10" intorder="1">borji2022pros</bcf:citekey>
+    <bcf:citekey order="11" intorder="1">lucic2018gans</bcf:citekey>
+    <bcf:citekey order="12" intorder="1">briola2024</bcf:citekey>
+    <bcf:citekey order="13" intorder="1">kennel1992</bcf:citekey>
+    <bcf:citekey order="14" intorder="1">marwan2008</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">

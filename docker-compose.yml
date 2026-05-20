@@ -58,8 +58,8 @@ services:
       CELL: ${CELL:-kraken:BTC-USDC}
       INPUT_PARQUET: ${INPUT_PARQUET:-/work/tarel/datasets/consolidated/kraken/BTC-USDC.parquet}
       RUNS: /work/tarel/artifacts/runs
-      EXP: ${EXP:-0xA0000001}
-      SEED: ${SEED:-4}
+      EXP: ${EXP:-0xA0000003}
+      SEED: ${SEED:-2}
     volumes:
       # Read-only mount of the on-disk parquet store. The container only
       # needs to read; preventing writes catches accidental dataset
@@ -95,10 +95,10 @@ services:
       # Number of seeds to train (pilot=3, production=20).
       SEED: ${SEEDS_COUNT:-2}
       # Wallclock budget per (cell, seed) in minutes.
-      RUN_MINS: ${RUN_MINS:-10}
+      RUN_MINS: ${RUN_MINS:-15}
       RUNS: /work/tarel/artifacts/runs
-      EXP: ${EXP:-0xA0000001}
-      CLOCKS: ${CLOCKS:-event,physical,info_time}
+      EXP: ${EXP:-0xA0000003}
+      CLOCKS: ${CLOCKS:-physical}
     volumes:
       - ./datasets:/work/tarel/datasets:ro
       - ./artifacts/runs:/work/tarel/artifacts/runs

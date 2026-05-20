@@ -1,0 +1,83 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\abx@aux@refcontext{none/global//global/global/global}
+\abx@aux@cite{0}{wiese2020quant}
+\abx@aux@segm{0}{0}{wiese2020quant}
+\abx@aux@cite{0}{takahashi2019modeling}
+\abx@aux@segm{0}{0}{takahashi2019modeling}
+\abx@aux@cite{0}{koshiyama2020generative}
+\abx@aux@segm{0}{0}{koshiyama2020generative}
+\abx@aux@cite{0}{eckmann1987}
+\abx@aux@segm{0}{0}{eckmann1987}
+\abx@aux@cite{0}{zbilut1992}
+\abx@aux@segm{0}{0}{zbilut1992}
+\abx@aux@cite{0}{marwan2007}
+\abx@aux@segm{0}{0}{marwan2007}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Literature review}{1}{section.2}\protected@file@percent }
+\abx@aux@cite{0}{strozzi2002recurrence}
+\abx@aux@segm{0}{0}{strozzi2002recurrence}
+\abx@aux@cite{0}{safa2024}
+\abx@aux@segm{0}{0}{safa2024}
+\abx@aux@cite{0}{heusel2017fid}
+\abx@aux@segm{0}{0}{heusel2017fid}
+\abx@aux@cite{0}{borji2022pros}
+\abx@aux@segm{0}{0}{borji2022pros}
+\abx@aux@cite{0}{lucic2018gans}
+\abx@aux@segm{0}{0}{lucic2018gans}
+\abx@aux@cite{0}{briola2024}
+\abx@aux@segm{0}{0}{briola2024}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Problem definition}{2}{section.3}\protected@file@percent }
+\newlabel{sec:problem}{{3}{2}{Problem definition}{section.3}{}}
+\newlabel{eq:h1}{{1}{2}{Problem definition}{equation.1}{}}
+\@writefile{toc}{\contentsline {paragraph}{Stage 1: Bucketed state vectors.}{2}{equation.1}\protected@file@percent }
+\abx@aux@cite{0}{kennel1992}
+\abx@aux@segm{0}{0}{kennel1992}
+\abx@aux@cite{0}{marwan2008}
+\abx@aux@segm{0}{0}{marwan2008}
+\@writefile{toc}{\contentsline {paragraph}{Stage 2: Distance plots, recurrence plots, normalized tensors.}{3}{equation.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Stage 3: Stationarity Score.}{3}{equation.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Stage 4: W-GAN-GP and four-axis Stability Score.}{3}{equation.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Data}{3}{section.4}\protected@file@percent }
+\newlabel{sec:data}{{4}{3}{Data}{section.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Methods}{4}{section.5}\protected@file@percent }
+\newlabel{sec:methods}{{5}{4}{Methods}{section.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Results}{5}{section.6}\protected@file@percent }
+\newlabel{sec:results}{{6}{5}{Results}{section.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Stage-1 bucket construction yield per cell and clock for run \texttt  {00000000c002daaaX}. $N_{\text  {rec}}$ is the count of buckets that reached the recurrence-plot writer; $N_{\text  {rqa}}$ is the count admitted to RQA aggregation ($n{\ge }16$ snapshots).}}{6}{table.1}\protected@file@percent }
+\newlabel{tab:stage_one_yield}{{1}{6}{Stage-1 bucket construction yield per cell and clock for run \texttt {00000000c002daaaX}. $N_{\text {rec}}$ is the count of buckets that reached the recurrence-plot writer; $N_{\text {rqa}}$ is the count admitted to RQA aggregation ($n{\ge }16$ snapshots)}{table.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Per-bucket duration distributions across the two cells and three clocks (log-scale $x$). The info\_time clock contracts the bucket population substantially relative to physical and event.}}{6}{figure.1}\protected@file@percent }
+\newlabel{fig:bucket_duration}{{1}{6}{Per-bucket duration distributions across the two cells and three clocks (log-scale $x$). The info\_time clock contracts the bucket population substantially relative to physical and event}{figure.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Aggregate Recurrence Quantification Analysis at the headline target $RR^{*}{=}5\%$ across the bucket population per cell and clock for run \texttt  {00000000c002daaaX}. Values are mean$\pm $std over buckets with $n{\ge }16$ snapshots. $\overline  {L_{\max }}$ rounded to the nearest integer.}}{7}{table.2}\protected@file@percent }
+\newlabel{tab:stage_one_rqa}{{2}{7}{Aggregate Recurrence Quantification Analysis at the headline target $RR^{*}{=}5\%$ across the bucket population per cell and clock for run \texttt {00000000c002daaaX}. Values are mean$\pm $std over buckets with $n{\ge }16$ snapshots. $\overline {L_{\max }}$ rounded to the nearest integer}{table.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Stage-2 execution summary for run \texttt  {00000000c002daaaX} at $J{=}1$ seed (\texttt  {seed\_idx}$=0$) per (cell, clock). Wallclock is from the last checkpoint's \texttt  {diagnostics\_meta.json}; gen-steps and crit-steps are the locked counters at that checkpoint. $\overline  {\text  {EM}}$ is the mean of the last 100 raw EM-gap samples; $\overline  {\text  {GP}}$ is the mean of all per-step gradient-penalty values; $\overline  {\text  {GP}}_{\max }$ is their maximum. Rows marked ``--'' were not launched in this run.}}{7}{table.3}\protected@file@percent }
+\newlabel{tab:stage_two_summary}{{3}{7}{Stage-2 execution summary for run \texttt {00000000c002daaaX} at $J{=}1$ seed (\texttt {seed\_idx}$=0$) per (cell, clock). Wallclock is from the last checkpoint's \texttt {diagnostics\_meta.json}; gen-steps and crit-steps are the locked counters at that checkpoint. $\overline {\text {EM}}$ is the mean of the last 100 raw EM-gap samples; $\overline {\text {GP}}$ is the mean of all per-step gradient-penalty values; $\overline {\text {GP}}_{\max }$ is their maximum. Rows marked ``--'' were not launched in this run}{table.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Per-bucket distributions of $DET$ (top row) and $LAM$ (bottom row) at $RR^{*} = 5\%$, faceted by clock; one violin per cell within each panel. The info\_time clock concentrates mass at high $DET$ / $LAM$ for both cells.}}{7}{figure.2}\protected@file@percent }
+\newlabel{fig:rqa_violins}{{2}{7}{Per-bucket distributions of $DET$ (top row) and $LAM$ (bottom row) at $RR^{*} = 5\%$, faceted by clock; one violin per cell within each panel. The info\_time clock concentrates mass at high $DET$ / $LAM$ for both cells}{figure.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Partial Stability Score.}{7}{figure.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Population-mean binary recurrence plot per (cell, clock), $64 \times 64$ resample, $RR^{*} = 5\%$.}}{7}{figure.3}\protected@file@percent }
+\newlabel{fig:mean_rp}{{3}{7}{Population-mean binary recurrence plot per (cell, clock), $64 \times 64$ resample, $RR^{*} = 5\%$}{figure.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Stage-2 EM-gap convergence per trained (cell, clock); raw per-step values (light) and rolling-100 smooth (dark); dashed line marks the final-100-step mean reported in the inset.}}{8}{figure.4}\protected@file@percent }
+\newlabel{fig:em_gap}{{4}{8}{Stage-2 EM-gap convergence per trained (cell, clock); raw per-step values (light) and rolling-100 smooth (dark); dashed line marks the final-100-step mean reported in the inset}{figure.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Stage-2 loss-function evolution aggregated by cell: rows show EM-gap (rolling-100 smooth), gradient-penalty magnitude (symlog-y), and the critic-loss approximation $\hat  {L}_D = -\text  {EM} + \lambda _{\mathrm  {GP}} \cdot \text  {GP}$ at the locked $\lambda _{\mathrm  {GP}}{=}10$. Columns are cells; line style distinguishes the three clocks within each panel.}}{8}{figure.5}\protected@file@percent }
+\newlabel{fig:loss_by_cell}{{5}{8}{Stage-2 loss-function evolution aggregated by cell: rows show EM-gap (rolling-100 smooth), gradient-penalty magnitude (symlog-y), and the critic-loss approximation $\hat {L}_D = -\text {EM} + \lambda _{\mathrm {GP}} \cdot \text {GP}$ at the locked $\lambda _{\mathrm {GP}}{=}10$. Columns are cells; line style distinguishes the three clocks within each panel}{figure.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Discussion}{8}{section.7}\protected@file@percent }
+\newlabel{sec:discussion}{{7}{8}{Discussion}{section.7}{}}
+\abx@aux@read@bbl@mdfivesum{11DA069126F240B75C86DAF975A1C142}
+\abx@aux@defaultrefcontext{0}{wiese2020quant}{none/global//global/global/global}
+\abx@aux@defaultrefcontext{0}{takahashi2019modeling}{none/global//global/global/global}
+\abx@aux@defaultrefcontext{0}{koshiyama2020generative}{none/global//global/global/global}
+\abx@aux@defaultrefcontext{0}{eckmann1987}{none/global//global/global/global}
+\abx@aux@defaultrefcontext{0}{zbilut1992}{none/global//global/global/global}
+\abx@aux@defaultrefcontext{0}{marwan2007}{none/global//global/global/global}
+\abx@aux@defaultrefcontext{0}{strozzi2002recurrence}{none/global//global/global/global}
+\abx@aux@defaultrefcontext{0}{safa2024}{none/global//global/global/global}
+\abx@aux@defaultrefcontext{0}{heusel2017fid}{none/global//global/global/global}
+\abx@aux@defaultrefcontext{0}{borji2022pros}{none/global//global/global/global}
+\abx@aux@defaultrefcontext{0}{lucic2018gans}{none/global//global/global/global}
+\abx@aux@defaultrefcontext{0}{briola2024}{none/global//global/global/global}
+\abx@aux@defaultrefcontext{0}{kennel1992}{none/global//global/global/global}
+\abx@aux@defaultrefcontext{0}{marwan2008}{none/global//global/global/global}
+\gdef \@abspage@last{9}

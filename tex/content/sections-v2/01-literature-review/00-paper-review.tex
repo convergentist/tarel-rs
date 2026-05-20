@@ -1,0 +1,49 @@
+\section{Literature review}
+
+\subsection*{Generative models for LOB and tick data}
+Wiese et al.~\cite{wiese2020quant} introduced Quant GANs, a temporal
+convolutional GAN for univariate return series with explicit attention
+to long-tailed marginals. Subsequent work has explored W-GAN-GP
+variants~\cite{takahashi2019modeling}, RNN-based generators for tick
+series~\cite{koshiyama2020generative}, and conditional architectures
+that take volatility regimes or macro indicators as conditioning input.
+These methods all model price- or return-level data; we model
+recurrence-plot tensors derived from the LOB state. Their architectures
+could be substituted into our Stage~4 with minimal modification, and we
+treat an ablation across generator backbones as a natural follow-on
+rather than a competing contribution. To our knowledge, none of these
+methods report a per-instrument training-stability scalar that is
+comparable across markets, which is the empirical primitive we
+introduce.
+
+\subsection*{Recurrence plots in finance}
+Recurrence plots (RPs) were introduced by Eckmann, Kamphorst and
+Ruelle~\cite{eckmann1987} as a tool for visualizing the recurrence
+structure of trajectories in the reconstructed phase space of a
+dynamical system. Their quantification, recurrence quantification
+analysis (RQA), was developed by Zbilut and Webber~\cite{zbilut1992}
+and Marwan and colleagues~\cite{marwan2007}, who codified six standard
+scalars over a binary RP matrix: recurrence rate ($RR$), determinism
+($DET$), laminarity ($LAM$), longest diagonal line ($L_{\max}$),
+trapping time ($TT$), and entropy of the diagonal-line-length
+distribution ($ENTR$).
+
+In financial econometrics, RPs have been applied predominantly to
+univariate price or return series~\cite{strozzi2002recurrence}, with
+the goal of detecting regime changes or non-stationarity. The closest
+sibling to the present work is Safa et al.~\cite{safa2024}, who use
+non-thresholded RPs (i.e., distance plots) computed from sliding
+windows over L1 tick streams as the input to a $\beta$-VAE for
+manipulation detection on NASDAQ equities. We differ from Safa et al.\
+on three structural axes. First, we use full L2 depth (top-25 levels
+per side) rather than best-bid/best-ask only, raising the state
+dimension from $\mathbb{R}^2$ to $\mathbb{R}^{50}$ and turning the
+recurrence plot into a fingerprint of depth-resolved liquidity geometry
+rather than spread dynamics alone. Second, we bucket under three
+parallel clocks (physical, event, and information time) and report
+every downstream finding three times in parallel; their setup is
+single-clock (physical). Third, our target is not anomaly detection on
+a known label but the seed-to-seed reproducibility of a generative
+model trained on the RPs themselves; this makes the RP a piece of
+training data rather than a piece of feature engineering. In short,
+Safa et al.\ treat the RP as a sensor; we treat it as a distribution.
