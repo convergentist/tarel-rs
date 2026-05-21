@@ -45,21 +45,21 @@
 services:
 
   stage-one:
-    image: tarel-rs:m4-stage-one
+    image: ${STG_ONE_IMAGE:-tarel-rs:-m4-stage-one}
     build:
       context: .
-      dockerfile: m4-stage-one.Dockerfile
+      dockerfile: ${STG_ONE_DOCKER_FILE:-m4-stage-one.Dockerfile}
       platforms:
-        - linux/arm64
-    platform: linux/arm64
+        - ${STG_ONE_PLATFORM:-linux/arm64}
+    platform: ${STG_ONE_PLATFORM:-linux/arm64}
     environment:
       # Stage-1 inputs (defaults match the kraken parquet that ships in
       # datasets/consolidated/). Override via .env or `-e VAR=...`.
       CELL: ${CELL:-kraken:BTC-USDC}
       INPUT_PARQUET: ${INPUT_PARQUET:-/work/tarel/datasets/consolidated/kraken/BTC-USDC.parquet}
-      RUNS: /work/tarel/artifacts/runs
-      EXP: ${EXP:-0xA0000003}
-      SEED: ${SEED:-2}
+      OUTPUT_RUNS: /work/tarel/artifacts/runs
+      STG_ONE_EXP: ${STG_ONE_EXP:-0xA0000003}
+      STG_ONE_SEED: ${STG_ONE_SEED:-2}
     volumes:
       # Read-only mount of the on-disk parquet store. The container only
       # needs to read; preventing writes catches accidental dataset
@@ -71,19 +71,19 @@ services:
       - ./artifacts/runs:/work/tarel/artifacts/runs
 
   stage-two:
-    image: tarel-rs:m4-stage-two
+    image: ${STG_TWO_IMAGE:-tarel-rs:m4-stage-two}
     build:
       context: .
-      dockerfile: m4-stage-two.Dockerfile
+      dockerfile: ${STG_TWO_DOCKER_FILE:-m4-stage-two.Dockerfile}
       platforms:
-        - linux/arm64
+        - ${STG_TWO_PLATFORM:-linux/arm64}
       # `stage_one_image` is the named build context the stage-two
       # Dockerfile references via `FROM stage_one_image`. Pointing it at
       # `service:stage-one` makes compose build stage-one first and reuse
       # that image, so we don't rebuild cargo/torch twice.
       additional_contexts:
         stage_one_image: service:stage-one
-    platform: linux/arm64
+    platform: ${STG_TWO_PLATFORM:-linux/arm64}
     depends_on:
       stage-one:
         # Block stage-two until stage-one exits 0. If stage-one fails,
@@ -93,12 +93,12 @@ services:
     environment:
       CELL: ${CELL:-kraken:BTC-USDC}
       # Number of seeds to train (pilot=3, production=20).
-      SEED: ${SEEDS_COUNT:-2}
+      STG_TWO_SEED: ${STG_TWO_SEED:-2}
       # Wallclock budget per (cell, seed) in minutes.
-      RUN_MINS: ${RUN_MINS:-15}
-      RUNS: /work/tarel/artifacts/runs
-      EXP: ${EXP:-0xA0000003}
-      CLOCKS: ${CLOCKS:-physical}
+      STG_TWO_RUN_MINS: ${STG_TWO_RUN_MINS:-15}
+      OUTPUT_RUNS: /work/tarel/artifacts/runs
+      STG_TWO_EXP: ${STG_TWO_EXP:-0xA0000003}
+      STG_TWO_CLOCKS: ${STG_TWO_CLOCKS:-physical}
     volumes:
       - ./datasets:/work/tarel/datasets:ro
       - ./artifacts/runs:/work/tarel/artifacts/runs

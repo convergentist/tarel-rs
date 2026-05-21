@@ -174,7 +174,7 @@ exec tarel run-stage-one \
     --runs "${RUNS}" \
     --experiment-seed "${EXP}" \
     --seed "${SEED}" \
-    --produce-dp-rp
+    --produce-dp-rp \
     --full
 EOF
 RUN chmod +x /usr/local/bin/run-stage-one.sh
